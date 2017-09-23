@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xmldict PUBLIC "-//Tildesoft//DTD XMLDICT 1.1//EN" "http://www.tildesoft.com/DTDs/XMLDictionary-1.1.dtd">
+<xmldict version="1.1">
+	<key>SyncWarning</key>
+	<true/>
+	<key>Enabled</key>
+	<false/>
+	<key>PlanPath</key>
+	<string>C:\Users\tonyg\GoogleDrive\AstroPlanner\</string>
+	<key>SyncItemEnabled6</key>
+	<true/>
+	<key>SyncItemEnabled8</key>
+	<true/>
+	<key>LastQuitDate.0</key>
+	<date>1980-01-01 00:00:00</date>
+	<key>LastQuitDate.1</key>
+	<date>1980-01-01 00:00:00</date>
+	<key>LastQuitDate.2</key>
+	<date>1980-01-01 00:00:00</date>
+	<key>LastQuitDate.3</key>
+	<date>1980-01-01 00:00:00</date>
+	<key>LastQuitDate.4</key>
+	<date>1980-01-01 00:00:00</date>
+	<key>LastQuitDate.5</key>
+	<date>1980-01-01 00:00:00</date>
+	<key>LastQuitDate.6</key>
+	<date>1980-01-01 00:00:00</date>
+	<key>LastQuitDate.7</key>
+	<date>1980-01-01 00:00:00</date>
+	<key>LastQuitDate.8</key>
+	<date>1980-01-01 00:00:00</date>
+	<key>LastQuitDate.9</key>
+	<date>1980-01-01 00:00:00</date>
+	<key>LastQuitDate.10</key>
+	<date>1980-01-01 00:00:00</date>
+</xmldict>

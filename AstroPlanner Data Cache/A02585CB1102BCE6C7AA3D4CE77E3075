@@ -1,0 +1,81 @@
+APSF,V1,0,,-1,0,
+// Create Telescope vs. Eyepiece tables showing magnifications and FOVs
+//= Telescope vs Eyepiece
+
+sub main()
+
+	// Get list of optical aids that change magnification
+	dim Aids(-1) as OpticalAidResource
+	for iaid as integer = 1 to OpticalAidResource.Count
+		dim aid as OpticalAidResource = OpticalAidResource.Get(iaid)
+	  if aid.Magnification<>1.0 or aid.FocalLength<>0.0 then
+	    Aids.Append aid
+	  end if
+	next
+
+	// Get list of non-binocular telescopes
+	dim Scopes(-1) as TelescopeResource
+	for itelescope as integer = 1 to TelescopeResource.Count
+		dim scope as TelescopeResource = TelescopeResource.Get(itelescope)
+	  if not scope.IsBinocular then
+	    Scopes.Append scope
+	  end if
+	next
+
+	dim c as new Canvas(800,1000,Plan(),"Magnification")
+	c.TextFont("System",11)
+	dim t as new Table(EyepieceResource.Count+1,ubound(Scopes)+2)
+
+	for itelescope as integer = 0 to ubound(Scopes)
+	  t.Cell(1,itelescope+2)=Scopes(itelescope).Name
+	  t.CellStyle(1,itelescope+2)=Table.style_Inverted+Table.style_Gray
+	next
+	for ieyepiece as integer = 1 to EyepieceResource.Count
+	  t.Cell(ieyepiece+1,1)=EyepieceResource.Get(ieyepiece).Name
+	  t.CellStyle(ieyepiece+1,1)=Table.style_Inverted+Table.style_Gray
+	  t.RowHeight(ieyepiece+1)=100.0*(ubound(Aids)+2)
+	next
+	t.CellStyle(1,1)=Table.style_Bold
+	t.ColumnWidth(1)=15.0
+
+	// Magnification table
+
+	t.Cell(1,1)="Magnification"
+
+	for itelescope as integer = 0 to ubound(Scopes)
+	  for ieyepiece as integer = 1 to EyepieceResource.Count
+	    dim s as string=str(round(APResource.Magnification(Scopes(itelescope),EyepieceResource.Get(ieyepiece),nil)))+" X"
+	    for iaid as integer = 0 to ubound(Aids)
+	      s=s+NewLine+str(round(APResource.Magnification(Scopes(itelescope),EyepieceResource.Get(ieyepiece),Aids(iaid))))+ _
+	         " X  (with "+Aids(iaid).Name+")"
+	    next
+	    t.Cell(ieyepiece+1,itelescope+2)=s
+	  next
+	next
+
+	dim y as integer=c.DrawTable(t,0,0,c.Width,c.Height,Table.grid_Thin)
+
+	// FOV table
+
+	t.Cell(1,1)="Field of View"
+
+	for itelescope as integer = 0 to ubound(Scopes)
+	  for ieyepiece as integer = 1 to EyepieceResource.Count
+	    dim s as string=AngleFormatted(APResource.ActualFOV(Scopes(itelescope),EyepieceResource.Get(ieyepiece)))
+	    for iaid as integer = 0 to ubound(Aids)
+	      s=s+NewLine+AngleFormatted(APResource.ActualFOV(Scopes(itelescope),EyepieceResource.Get(ieyepiece),Aids(iaid)))+ _
+	         "  (with "+Aids(iaid).Name+")"
+	    next
+	    t.Cell(ieyepiece+1,itelescope+2)=s
+	  next
+	next
+
+	if EyepieceResource.Count>5 then
+	  c.NewPage
+	  y=c.DrawTable(t,0,0,c.Width,c.Height,Table.grid_Thin)
+	else
+	  y=c.DrawTable(t,0,y+20,c.Width,c.Height,Table.grid_Thin)
+	end if
+
+	c.Close
+end sub

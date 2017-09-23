@@ -1,0 +1,209 @@
+APSF,V1,0,,-1,0,
+// Print observing form for selected object
+//= Observing Form
+
+sub main()
+	
+	const print = true  // Set this to false if you want to display the table in a window instead of printing
+	
+	dim selected as APPlanObject = Plan().SelectedObject
+	if selected = nil then return // No object selected - do nothing
+	
+	const nObsTable = 3  	 // Three observations per page
+	const ncolsObject = 8	 // 8 columns in object table
+	const ncolsObs = 6 		 // 6 columns in object table
+	
+	// Create the object description table
+	
+	 dim t as new Table(2,ncolsObject,"Object Data")
+	
+	for j as integer = 1 to ncolsObject
+		t.ColumnJustify(j) = Table.justify_Center + Table.justify_VCenter
+	next
+	
+	dim row as integer = 1
+	dim col as integer = 1
+	dim vtitle,vvalue as string
+	dim nuser as integer = Plan().nUserFieldDefinitions
+	for j as integer = 0 to 17+nuser
+		vvalue = ""
+		select case j
+		case 0
+			vtitle = "ID"
+			vvalue=selected.ID
+		case 1
+			vtitle = "Name"
+			vvalue=selected.Name
+		case 2
+			vtitle = "RA"
+			vvalue=selected.RAFormatted
+		case 3
+			vtitle = "Dec"
+			vvalue=selected.DecFormatted
+		case 4
+			vtitle = "Constellation"
+			vvalue=selected.Constellation
+		case 5
+			vtitle = "Type"
+			vvalue=selected.Type
+		case 6
+			vtitle = "Magnitude"
+			if selected.Magnitude<30.0 then vvalue=format(selected.Magnitude,"-0.0")
+		case 7
+			vtitle = "Magnitude 2"
+			if selected.Magnitude2<30.0 then vvalue=format(selected.Magnitude2,"-0.0")
+		case 8
+			vtitle = "Separation"
+			if selected.Separation>0.0 then vvalue=format(selected.Separation,"0.0")+""""
+		case 9
+			vtitle = "Pos. Angle"
+			if selected.PosAngle<>0 then vvalue=str(selected.PosAngle)
+		case 10
+			vtitle = "Size"
+			vvalue=selected.Size
+		case 11
+			vtitle = "Period"
+			if selected.Period>0.0 then vvalue=format(selected.Period,"0.0")
+		case 12
+			vtitle = "Spectral"
+			vvalue=selected.Spectral
+		case 13
+			vtitle = "Chart"
+			vvalue=selected.Chart
+		case 14
+			vtitle = "Difficulty"
+			if selected.DifficultyIndex<>0.0 then vvalue=format(selected.DifficultyIndex,"-0")
+		case 15
+			vtitle = "Lord's Rating"
+			vvalue=selected.LordRating
+		case 16
+			vtitle = "ODM"
+			if selected.ODM<>0.0 then vvalue=format(selected.ODM,"-0")
+		case 17
+			vtitle = "SB"
+			if selected.SurfaceBrightness<>0.0 then vvalue=format(selected.SurfaceBrightness,"-0.0")
+		else
+			dim uf as APUserField = Plan().UserFieldDefinition(j-17)
+			vtitle = uf.Title
+			vvalue = selected.UserField(uf.Title).Value
+		end select
+		
+		if row>t.RowCount then
+			t.AddRow
+			t.AddRow
+		end if
+		
+		t.Cell(row,col)=vtitle
+		t.Cell(row+1,col)=vvalue
+		
+		if col=1 then 
+			t.RowStyle(row)=Table.style_Bold + Table.style_Inverted + Table.style_Gray
+			if row=1 then
+				t.RowHeight(row+1)=200.0
+			else
+				t.RowHeight(row+1)=120.0
+			end if
+		end if
+		
+		if col=ncolsObject then 
+			row=row+2
+			col=1
+		else
+			col=col+1
+		end if
+	next
+	
+	// Choose whether to print or display in a window
+	
+	dim c as Canvas
+	if print then
+		c=new Canvas(false)
+		if c.Cancelled then return
+		c.TextFont("Times",10)
+	else
+		c=new Canvas(800,1000)
+		c.TextFont("Geneva",10)
+	end if
+	
+	// Render the object data table
+	dim w as integer = c.Width
+	dim y as integer = c.DrawTable(t,0,0,w,c.Height,Table.grid_Thin)
+	t.Close
+	
+	//Add a notes section to the bottom
+	t = new Table(2,1)
+	t.ColumnJustify(1) = Table.justify_Left + Table.justify_VCenter
+	t.RowStyle(1) = Table.style_Bold + Table.style_Inverted + Table.style_Gray
+	t.RowHeight(2) = 250.0
+	t.Cell(1,1) = "Notes"
+	t.Cell(2,1) = selected.Notes
+	y = c.DrawTable(t,0,y,w,c.Height-y,Table.grid_Thin)
+	t.Close
+	
+	// Create the blank observation form table	
+	t = new Table(4,ncolsObs,"Observation")
+	
+	row=1
+	col=1
+	for j as integer = 0 to 17
+		select case j
+		case 0
+			vtitle = "Date/Time"
+		case 1
+			vtitle = "Site"
+		case 2
+			vtitle = "Telescope"
+		case 3
+			vtitle = "Eyepiece"
+		case 4
+			vtitle = "Filter"
+		case 5
+			vtitle = "Opt. Aid"
+		case 6
+			vtitle = "Seeing"
+		case 7
+			vtitle = "Transparency"
+		else
+			vtitle = ""
+		end select
+		
+		if vtitle<>"" then
+			t.Cell(row,col) = vtitle
+		else
+			t.CellStyle(row,col) = Table.style_Gray
+		end if
+		
+		if col=1 then 
+			t.RowStyle(row) = Table.style_Bold + Table.style_Inverted + Table.style_Gray
+			t.RowHeight(row+1) = 200.0
+		end if
+		
+		if col=ncolsObs then 
+			row=row+2
+			col=1
+		else
+			col=col+1
+		end if
+	next
+	
+	// Create the Notes field for the bottom
+	dim tNotes as new Table(2,1)
+	tNotes.ColumnJustify(1) = Table.justify_Left + Table.justify_VCenter
+	tNotes.RowStyle(1) = Table.style_Bold + Table.style_Inverted + Table.style_Gray
+	tNotes.RowHeight(2) = -1.0
+	tNotes.Cell(1,1) = "Notes"
+	
+	// Render a bunch of copies of the table, spread over the rest of the page
+	dim ObsTableHeight as integer = (c.Height-y)\nObsTable
+	for iObs as integer = 1 to nObsTable
+		y=y+20
+		dim ytop as integer = y
+		y=c.DrawTable(t,0,y,w,ObsTableHeight-20,Table.grid_Thin)
+		y=c.DrawTable(tNotes,0,y,w,ObsTableHeight-20-(y-ytop),Table.grid_Thin)
+	next
+	
+	t.Close
+	tNotes.Close
+	
+	c.Close
+end sub

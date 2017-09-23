@@ -1,0 +1,40 @@
+APSF,V1,0,,-1,0,
+//- Compute the parallactic angle for all objects.
+//- Note that this value changes over time, and so this script should be
+//- run immediately before using such values. The script creates a user-
+//- defined field for each object, or overwrites the values in that field
+//- if it has already been created.
+//-
+//- The parallactic angle at a point in the sky is the position angle of
+//- the vertical, i.e., the angle between the direction to the North
+//- Celestial Pole and to the zenith. It is measured from North through 
+//- East and is always negative when the source is in the East and 
+//- positive when in the West.
+
+function ParallacticAngle(ob as APPlanObject) as double                  
+  dim ha as double = ob.HourAngle*HoursToRadians
+  dim dec as double = ob.Dec*DegreesToRadians
+  dim lat as double = Plan().CurrentSite.Latitude*DegreesToRadians
+  dim pa as double = atan2(-sin(ha),cos(dec)*tan(lat)-sin(dec)*cos(ha))
+	return -RadiansToDegrees*pa
+end function
+
+sub main()
+	const User_Field_Name = "Parallactic Angle"
+	
+	// Create "Parallactic Angle" user field definition (if not already present)
+	call Plan().NewUserFieldDefinition(User_Field_Name,APUserField.ufType_Double)
+
+	// Update the values of the field for all objects in the plan document
+	for i as integer = 1 to Plan().nObjects
+		// Calculate the value for the object
+		dim pa as double = ParallacticAngle(Plan().Obj(i))
+		
+		// Create the user field for the object (if not already present)
+	  call Plan().Obj(i).AddUserField(User_Field_Name)
+	  
+	  // Update the user field value
+	  Plan().Obj(i).UserField(User_Field_Name).Value=pa
+	next
+
+end sub

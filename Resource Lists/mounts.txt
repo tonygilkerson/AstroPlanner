@@ -1,0 +1,50 @@
+2017-01-19 09:47:16
+* UID	Vendor	Model	Geometry	Protocol	SubType
+1	AstroPlanner	Emulated Go To		Emulated GoTo	0
+2	AstroPlanner	Emulated DSC	DSC	Emulated DSC	0
+3	AstroPlanner	Scripted Driver		Scripted	0
+11	Astro-Physics	GTO CP1/2	GEM	Astro-Physics	1
+12	Astro-Physics	GTO CP3	GEM	Astro-Physics	3
+20	Celestron	NexStar	Fork	NexStar	-1
+21	Celestron	NexStar 5/8	Fork	NexStar	-2
+22	Celestron	NexStar GPS	Fork	NexStar	3
+23	Celestron	NexStar i-Series	Fork	NexStar	4
+24	Celestron	CGE	GEM	NexStar	5
+25	Celestron	Advanced Series	GEM	NexStar	6
+26	Celestron	SLT	Fork	NexStar	7
+27	Celestron	CPC	Fork	NexStar	8
+28	Celestron	GT	Fork	NexStar	9
+29	Celestron	SE	Fork	NexStar	10
+30	Celestron	CGEM	GEM	NexStar	11
+38	Celestron	Ultima 2000	Fork	U2K	0
+40	Meade	LX200 Classic	Fork	LX200	-1
+41	Meade	LX200 Classic (16")	Fork	LX200	-2
+42	Meade	LX200 GPS/R/ACF	Fork	Autostar2	-1
+43	Meade	MAX Mount	GEM	Autostar2	3
+44	Meade	RCX400	Fork	Autostar2	4
+45	Meade	LX200 GPS/R/ACF (16")	Fork	Autostar2	-2
+46	Meade	ETX series	Fork	Autostar	-1
+47	Meade	DS series	Fork	Autostar	-2
+48	Meade	LX series	Fork	Autostar	-3
+49	Meade	LXD series	GEM	Autostar	-4
+50	Meade	LS series	Fork	Autostar2	-3
+51	Meade	LX600	GEM	Autostar2	-5
+60	Meade	Magellan	DSC	Magellan	0
+70	Orion	Intelliscope w. COL	Dob	Intelliscope	0
+80	Orion	SynScan GoTo		SynScan	3
+90	Sky Engineering	Sky Commander	DSC	Sky Commander	0
+100	Starmaster	Sky Tracker		Sky Tracker	0
+110	StellarCAT	ServoCAT	Dob	ServoCAT	0
+120	Vixen	SkySensor 2000PC		SkySensor 2000	0
+130	Wildcard Innovations	Argo Navis	DSC	Argo Navis	0
+140	Tasco	Starguide	Fork	NexStar	-1
+150	iOptron	GOTONOVA		iOptron	-1
+151	iOptron	iEQ45Pro		iOptron2	1
+152	iOptron	CEM60		iOptron2	1
+160	Vixen	Star Book	GEM	StarBook	-1
+170	GTD	Pulsar 2	GEM	Pulsar 2	-1
+180	Vixen	SkySensor	GEM	SkySensor	0
+190	Takahashi	Temma	GEM	Temma	0
+200	Losmandy	Gemini	GEM	Gemini	0
+210	Skywatcher	SynScan Go To		SynScan	3
+2000	ASCOM	ASCOM Driver		ASCOM	0

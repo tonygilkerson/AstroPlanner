@@ -1,0 +1,2589 @@
+APSF1,V1,0,,-1,0,
+//# Author: Paul Rodman
+//# E-Mail: paul@ilanga.com
+//# URL:
+//# Name: Print Objects
+//# Category: Reports
+//# MinVersion: 2.0
+//# Keywords:
+//- This is the "Default" printing script. When in doubt use the "Default" option for printing, since
+//- this script might be out-of-date.
+//- This script current as of: AP V2.0.1
+//-------------------------------------------------------------------------------------------------
+class MyPrinterCanvas
+  inherits PrinterCanvas
+  
+  dim objIDs() as string
+
+  function GetHeaderItem(item as string) as string
+    return GetFooterItem(item)
+  end function
+
+  function GetFooterItem(item as string) as string
+    select case item
+    case "Plan file name"
+      return Plan(-1).Name
+    case "Telescope"
+    	dim t as TelescopeResource = Plan(-1).CurrentTelescope
+    	if t=nil then return "No Telescope" else return t.Name
+    case "Site"
+    	dim s as SiteResource = Plan(-1).CurrentSite
+    	if s=nil then return "No Site" else return s.Name
+    case "Object ID/s"
+      dim s,prefix as string
+      prefix="&^T&^T&^T"
+      for i as integer = 0 to ubound(objIDs)
+        dim a,b as string
+        BreakupID(objIDs(i),a,b)
+        if a<>prefix then
+          if s<>"" then s=s+"; "
+          s=s+objIDs(i)
+          prefix=a
+        else
+          s=s+","+b
+        end if
+      next
+      redim objIDs(-1)
+      return s
+    else
+      return "Undefined H/F"
+    end select
+  end function  
+
+  private sub BreakupID(id as string, byref a as string, byref b as string)
+    if IsNumeric(id) then
+      a=trim(id)
+      b=""
+      return
+    end if
+    for i as integer = 1 to len(id)
+      if IsNumeric(mid(id,i,1)) then
+        a=trim(left(id,i-1))
+        b=trim(mid(id,i))
+        return
+      end if
+    next
+      a=trim(id)
+      b=""  
+  end sub
+  
+end class
+
+//-------------------------------------------------------------------------------------------------
+dim c as MyPrinterCanvas
+
+//-------------------------------------------------------------------------------------------------
+class TableCollection
+  private dim tbl() as Table
+  private dim tblhdr() as Table
+  
+  private dim fldNames() as string
+  private dim fldValues() as string
+  private dim fldWidth() as integer
+  private dim fldRow() as integer
+  private dim fldColumn() as integer
+  private dim rowcount() as integer
+  private dim colcount() as integer
+  private dim width as integer
+  private dim row as integer
+  private dim compressed as boolean
+  private dim lastrow as integer
+  private dim grid as integer
+  private dim seq as integer
+  private dim hpad as integer
+  private dim vpad as integer
+  private dim maxcolwidth as integer
+  
+  //============================================================
+  sub Constructor(fnames() as string, ob() as APPlanObject)
+    dim i as integer
+    redim fldNames(ubound(fnames))
+    redim fldValues(ubound(fldNames))
+    redim fldWidth(ubound(fldNames))
+    for i=0 to ubound(fnames)
+      fldNames(i)=fnames(i)
+    next
+    if c.OptionChecked("Grid") then grid=Canvas.grid_Thin else grid=Canvas.grid_None
+    c.TablePadding(grid,hpad,vpad)
+    
+    maxcolwidth = val(c.OptionValue("MaxColWidth"))*c.Width*0.01
+    MeasureFieldWidthsObject(nil)
+    for i=0 to ubound(ob)
+      MeasureFieldWidthsObject(ob(i))
+    next
+    ConstructRowsAndColumns(false)
+    redim tbl(row)
+    compressed = c.OptionChecked("Compressed")
+    if compressed then 
+      redim tblhdr(row)
+      if c.OptionIncludes("Compressed","Multi-line") then lastrow=row else lastrow=0
+    else
+      lastrow=row
+    end if
+    SetupTables("ObjHeadings")
+    ComputeTableRowWidths
+    seq=val(c.OptionValue("StartSequence"))
+  end sub
+  
+  //============================================================
+  sub Constructor(fnames() as string, obs() as APObservation)
+    dim i as integer
+    redim fldNames(ubound(fnames))
+    redim fldValues(ubound(fldNames))
+    redim fldWidth(ubound(fldNames))
+    for i=0 to ubound(fnames)
+      fldNames(i)=fnames(i)
+    next
+    if c.OptionChecked("Grid") then grid=Canvas.grid_Thin else grid=Canvas.grid_None
+    c.TablePadding(grid,hpad,vpad)
+    
+    maxcolwidth = val(c.OptionValue("MaxColWidth"))*c.Width*0.01
+    MeasureFieldWidthsObservation(nil)
+    for i=0 to ubound(obs)
+      MeasureFieldWidthsObservation(obs(i))
+    next
+    ConstructRowsAndColumns(true)
+    redim tbl(row)
+    lastrow=row
+
+    SetupTables("ObsHeadings")
+    ComputeTableRowWidths
+  end sub
+  
+  //============================================================
+  sub Constructor(fnames() as string, sess() as APSession)
+    dim i as integer
+    redim fldNames(ubound(fnames))
+    redim fldValues(ubound(fldNames))
+    redim fldWidth(ubound(fldNames))
+    for i=0 to ubound(fnames)
+      fldNames(i)=fnames(i)
+    next
+    if c.OptionChecked("Grid") then grid=Canvas.grid_Thin else grid=Canvas.grid_None
+    c.TablePadding(grid,hpad,vpad)
+    
+    maxcolwidth = val(c.OptionValue("MaxColWidth"))*c.Width*0.01
+    MeasureFieldWidthsSession(nil)
+    for i=0 to ubound(sess)
+      MeasureFieldWidthsSession(sess(i))
+    next
+    ConstructRowsAndColumns(false)
+    redim tbl(row)
+    lastrow=row
+
+    SetupTables("SessHeadings")
+    ComputeTableRowWidths
+  end sub
+  
+  //============================================================
+  sub Constructor(fnames() as string, headingstyle as string, isObs as boolean)
+    dim i as integer
+    redim fldNames(ubound(fnames))
+    redim fldValues(ubound(fldNames))
+    redim fldWidth(ubound(fldNames))
+    for i=0 to ubound(fnames)
+      fldNames(i)=fnames(i)
+    next
+    maxcolwidth = val(c.OptionValue("MaxColWidth"))*c.Width*0.01
+    MeasureFieldWidths
+    ConstructRowsAndColumns(isObs)
+    redim tbl(row)
+    compressed = c.OptionChecked("Compressed")
+    if compressed then 
+      redim tblhdr(row)
+      if c.OptionIncludes("Compressed","Multi-line") then lastrow=row else lastrow=0
+    else
+      lastrow=row
+    end if
+    SetupTables(headingstyle)
+    ComputeTableRowWidths
+    if c.OptionChecked("Grid") then grid=Canvas.grid_Thin else grid=Canvas.grid_None
+    seq=val(c.OptionValue("StartSequence"))
+  end sub
+  
+  //============================================================
+  sub Close()
+    dim i as integer
+    for i=0 to ubound(tbl)
+      tbl(i).Close
+    next
+    for i=0 to ubound(tblhdr)
+      tblhdr(i).Close
+    next
+  end sub
+  
+  //============================================================
+  private sub MeasureFieldWidths()
+    // Measure maximum string width of each field
+
+    dim i as integer, fld as string
+
+    c.TextBold=true
+    c.TextFont("Heading",0)
+    
+    for i=0 to ubound(fldNames)
+      fld=fldNames(i)
+      if c.HasOption("AbbrevHeadings") and c.OptionChecked("AbbrevHeadings") then fld=c.Abbreviate(fld)
+      fldWidth(i)=min(max(c.TextWidth(fld)+hpad*2, c.Width*min(FormWidthForField(fld),1.0)),maxcolwidth)
+    next
+    c.TextBold=false
+  end sub
+
+  //============================================================
+  private sub MeasureFieldWidthsObject(ob as APPlanObject)
+    // Measure maximum string width of each object field
+
+    dim i as integer, fld,v as string
+
+		if ob=nil then
+    	c.TextBold=true
+    	c.TextFont("Heading",0)
+		else
+    	c.TextBold=false
+    	c.TextFont("Body",0)
+		end if
+  
+    for i=0 to ubound(fldNames)
+      fld=fldNames(i)
+      if fld="Notes" or fld="Annotations" then
+        fldWidth(i)=c.Width
+      else
+        if ob=nil then
+        	if c.HasOption("AbbrevHeadings") and c.OptionChecked("AbbrevHeadings") then fld=c.Abbreviate(fld)
+          fldWidth(i)=min(c.TextWidth(fld)+hpad*2,maxcolwidth)
+        else
+          if fld="Sequence #" then 
+            v=str(seq)
+          else
+            v=ObjectFieldValue(ob,fld)
+          end if
+          fldWidth(i)=min(max(fldWidth(i), c.TextWidth(v)+hpad*2),maxcolwidth)
+        end if
+      end if
+    next
+    c.TextBold=false
+  end sub
+
+  //============================================================
+  private sub MeasureFieldWidthsObservation(obs as APObservation)
+    // Measure maximum string width of each observation field
+
+    dim i as integer, fld,v as string
+
+		if obs=nil then
+    	c.TextBold=true
+    	c.TextFont("Heading",0)
+		else
+    	c.TextBold=false
+    	c.TextFont("Body",0)
+		end if
+  
+    for i=0 to ubound(fldNames)
+      fld=fldNames(i)
+      if instr(fld,"Notes")>0 then
+        fldWidth(i)=c.Width
+      else
+        if obs=nil then
+        	if c.HasOption("AbbrevHeadings") and c.OptionChecked("AbbrevHeadings") then fld=c.Abbreviate(fld)
+          fldWidth(i)=min(c.TextWidth(fld)+hpad*2,maxcolwidth)
+        else
+          if IsResourceField(fld) then
+            dim j as integer
+            for j=1 to obs.nResources
+              v=ObservationFieldValue(obs,fld,j)
+              if v<>"None" and v<>"Unknown" and instr(v,"No ")<>1 then
+                fldWidth(i)=min(max(fldWidth(i), c.TextWidth(v)+hpad*2),maxcolwidth)
+              end if
+            next
+          else
+            v=ObservationFieldValue(obs,fld)
+            fldWidth(i)=min(max(fldWidth(i), c.TextWidth(v)+hpad*2),maxcolwidth)
+          end if
+        end if
+      end if
+    next
+    c.TextBold=false
+  end sub
+
+  //============================================================
+  private sub MeasureFieldWidthsSession(sess as APSession)
+    // Measure maximum string width of each session field
+
+    dim i as integer, fld,v as string
+
+		if sess=nil then
+    	c.TextBold=true
+    	c.TextFont("Heading",0)
+		else
+    	c.TextBold=false
+    	c.TextFont("Body",0)
+		end if
+  
+  
+    for i=0 to ubound(fldNames)
+      fld=fldNames(i)
+      if instr(fld,"Notes")>0 then
+        fldWidth(i)=c.Width
+      else
+        if sess=nil then
+        	if c.HasOption("AbbrevHeadings") and c.OptionChecked("AbbrevHeadings") then fld=c.Abbreviate(fld)
+          fldWidth(i)=min(c.TextWidth(fld)+hpad*2,maxcolwidth)
+        else
+          v=SessionFieldValue(sess,fld)
+          fldWidth(i)=min(max(fldWidth(i), c.TextWidth(v)+hpad*2),maxcolwidth)
+        end if
+      end if
+    next
+    c.TextBold=false
+  end sub
+
+  //============================================================
+  private sub ConstructRowsAndColumns(isObs as boolean)
+    dim col, i, pagew as integer
+  
+    pagew=c.Width
+    redim fldRow(ubound(fldNames))
+    redim fldColumn(ubound(fldNames))
+    row=0
+    col=0
+    width=0
+    dim firstRField as boolean = false
+    dim nRField as integer = 0
+    for i=0 to ubound(fldNames)
+    	if isObs and IsResourceField(fldnames(i)) then 
+    		nRField=nRField+1
+    		firstRField=nRField=1
+    	end if
+      if fldWidth(i)>pagew then
+        if i>0 then row=row+1
+        fldRow(i)=row
+        fldColumn(i)=0
+        row=row+1
+        col=0
+        width=0
+      elseif Width+fldWidth(i)>pagew or firstRField then
+        row=row+1
+        fldRow(i)=row
+        fldColumn(i)=0
+        width=fldWidth(i)
+        col=1
+      else
+        width=width+fldWidth(i)
+        fldRow(i)=row
+        fldColumn(i)=col
+        col=col+1
+      end if
+      firstRField=false
+    next
+    
+    if col=0 then row=row-1 
+    redim colcount(row)
+    redim rowcount(row)
+    for i=0 to ubound(fldRow)
+      colcount(fldRow(i))=fldColumn(i)
+      rowcount(fldRow(i))=1
+    next
+    i=fldNames.IndexOf("Telescope")
+    if i>=0 then rowcount(fldRow(i))=4
+  end sub
+  
+  //============================================================
+  private sub SetupTables(headingstyle as string)
+    dim i as integer
+    for i=0 to row
+      if compressed then
+        tbl(i)=new Table(1,colcount(i)+1)
+        tbl(i).RowFontName(1)="Body"
+        tblhdr(i)=new Table(1,colcount(i)+1)
+        tblhdr(i).RowStyle(1)=StyleSelected(headingstyle)
+        tblhdr(i).RowFontName(1)="Heading"
+      else
+        tbl(i)=new Table(rowcount(i)+1,colcount(i)+1)
+        tbl(i).RowStyle(1)=StyleSelected(headingstyle)
+        tbl(i).RowFontName(1)="Heading"
+        tbl(i).RowFontName(2)="Body"
+      end if
+    next
+  end sub
+
+  //============================================================
+  private sub ComputeTableRowWidths()
+    dim rowWidth(),i,r,col as integer
+    redim rowWidth(row)
+    for i=0 to ubound(fldNames)
+      r=fldRow(i)
+      rowWidth(r)=rowWidth(r)+fldWidth(i)
+    next
+
+    for i=0 to ubound(fldNames)
+      r=fldRow(i)
+      col=fldColumn(i)
+      dim fld as string = fldNames(i)
+      if c.HasOption("AbbrevHeadings") and c.OptionChecked("AbbrevHeadings") then fld=c.Abbreviate(fld)
+      if compressed then
+        tblhdr(r).Cell(1,col+1)=fld
+        tblhdr(r).ColumnWidth(col+1)=fldWidth(i)/rowWidth(r)*100.0
+      else
+        tbl(r).Cell(1,col+1)=fld
+      end if
+      tbl(r).ColumnWidth(col+1)=fldWidth(i)/rowWidth(r)*100.0
+    next
+  end sub
+  
+  //============================================================
+  function TopOfPage(ytop as integer) as integer
+    // Call at the top of each page
+    dim y,i as integer
+    y=ytop
+    if compressed then
+      for i=0 to lastrow
+        y=c.DrawTable(tblhdr(i),0,y,c.Width,c.Height-y,grid)
+      next
+    end if
+    return y
+  end function
+  
+  //============================================================
+  sub AssignObjectValues(ob as APPlanObject)
+    dim i,row,col,drow as integer
+    if compressed then drow=1 else drow=2
+    for i=0 to ubound(fldNames)
+      row=fldRow(i)
+      col=fldColumn(i)
+      dim v as string
+      select case fldNames(i)
+      case "Sequence #" 
+        v=str(seq)
+      case "ODM Best Eyepiece"
+      	dim m as double = ob.ODM
+      	dim bestm as double
+      	dim t as TelescopeResource = Plan().CurrentTelescope
+      	if m<=0.0 or t=nil then
+      		v="n/a"
+      	else
+      		dim beste as EyepieceResource = APResource.BestEyepieceForMagnification(t,m,bestm)
+      		if beste=nil then
+      			v="n/a"
+      		else
+      			v=beste.Name+" ("+str(round(bestm))+"X)"
+      		end if
+      	end if
+      case "ODM Best Eyepiece + Optical Aid"
+      	dim m as double = ob.ODM
+      	dim bestm as double
+      	dim besta as OpticalAidResource
+      	dim t as TelescopeResource = Plan().CurrentTelescope
+      	if m<=0.0 or t=nil then
+      		v="n/a"
+      	else
+      		dim beste as EyepieceResource = APResource.BestEyepieceAndOpticalAidForMagnification(t,m,bestm,besta)
+      		if beste=nil then
+      			v="n/a"
+      		elseif besta=nil then
+      			v=beste.Name+" ("+str(round(bestm))+"X)"
+      		else
+      			v=beste.Name+" + "+besta.Name+" ("+str(round(bestm))+"X)"
+      		end if
+      	end if
+      case "Annotations" 
+      	dim ann() as Annotation = ob.Annotations
+      	dim s(-1) as string
+      	for j as integer = 0 to ubound(ann)
+      		if ann(j).Notes<>"" then
+      			s.Append ann(j).Notes
+      		end if
+      	next
+        v=Join(s,EndofLine)
+      else
+        v=ObjectFieldValue(ob,fldNames(i))
+      end select
+      
+      tbl(row).Cell(drow,col+1)=v
+
+      dim vid as integer
+      vid=Table.style_None
+      if fldNames(i)="ID" and c.OptionChecked("MarkSelected") and ob.Selected then
+        vid=BitWiseOR(vid,StyleSelected("MarkSelected"))
+      elseif fldNames(i)="ID" and c.OptionChecked("MarkHighlighted") and ob.IsHighlighted then
+        vid=BitWiseOR(vid,StyleSelected("MarkHighlighted"))
+      end if
+      
+      tbl(row).CellStyle(drow,col+1)=vid
+         
+      if instr(fldNames(i),"Notes")>0 or instr(fldNames(i),"Annotations")>0 then tbl(row).RowHeight(drow)=round(c.TextHeight(v,c.Width)/c.TextHeight)*100.0
+    next
+    seq=seq+1
+  end sub
+  
+  //============================================================
+  sub AssignObservationValues(obs as APObservation)
+    dim i,row,col as integer
+    
+    for i=0 to ubound(fldNames)
+      row=fldRow(i)
+      col=fldColumn(i)
+      dim v as string
+      if IsResourceField(fldNames(i)) then
+        // Adjust # rows to reflect resource combo count
+        dim j as integer
+        while tbl(row).RowCount<obs.nResources+1
+          tbl(row).AddRow
+        wend
+        while tbl(row).RowCount>obs.nResources+1
+          tbl(row).DeleteRow(tbl(row).RowCount)
+        wend
+        for j=1 to obs.nResources
+          v=ObservationFieldValue(obs,fldNames(i),j)
+          if v="None" or v="Unknown" or instr(v,"No ")=1 then v=""
+          tbl(row).Cell(j+1,col+1)=v
+        next
+      else
+        v=ObservationFieldValue(obs,fldNames(i))
+        tbl(row).Cell(2,col+1)=v
+        if instr(fldNames(i),"Notes")>0 then tbl(row).RowHeight(2)=round(c.TextHeight(v,c.Width)/c.TextHeight)*100.0
+      end if
+    next
+  end sub
+  
+  //============================================================
+  sub AssignSessionValues(sess as APSession)
+    dim i,row,col as integer
+    
+    for i=0 to ubound(fldNames)
+      row=fldRow(i)
+      col=fldColumn(i)
+      dim v as string
+      v=SessionFieldValue(sess,fldNames(i))
+      
+      tbl(row).Cell(2,col+1)=v
+         
+      if instr(fldNames(i),"Notes")>0 then tbl(row).RowHeight(2)=round(c.TextHeight(v,c.Width)/c.TextHeight)*100.0
+    next
+  end sub
+  
+  //============================================================
+  function TableHeight() as integer
+    dim hgt,i as integer
+    hgt=0
+    for i=0 to ubound(tbl)
+      hgt=hgt+c.TableHeight(tbl(i),c.Width,grid)
+      if compressed and not c.OptionIncludes("Compressed","Multi-line") then exit
+    next
+    return hgt
+  end function
+  
+  //============================================================
+  function DrawTable(ytop as integer) as integer
+    dim i,y as integer
+    y=ytop
+    for i=0 to lastrow
+      y=c.DrawTable(tbl(i),0,y,c.Width,c.Height-y,grid)
+    next
+    return y
+  end function
+    
+  //============================================================
+  function DrawSeparator(y as integer) as integer
+    if compressed and c.OptionIncludes("Compressed","separator lines") and grid=Canvas.grid_None then
+      if c.OptionIncludes("Compressed","Multi-line") then
+        c.DrawLine(0,y+c.TextHeight*0.5,c.Width,y+c.TextHeight*0.5)
+      else
+        c.DrawLine(0,y,c.Width,y)
+      end if
+    end if
+    if not compressed or c.OptionIncludes("Compressed","Multi-line") then return y+c.TextHeight else return y
+  end function
+  
+  //============================================================
+  sub EnlargeDataField(fld as string, lines as integer)
+    dim i,j as integer
+    for i=0 to ubound(tbl)
+      for j=1 to tbl(i).ColumnCount
+        if tbl(i).Cell(1,j)=fld then tbl(i).RowHeight(2)=lines*100.0
+      next
+    next
+  end sub
+  
+end class
+
+//-------------------------------------------------------------------------------------------------
+function ObjectSelected(ob as APPlanObject) as boolean
+  // Check the restrictions to see if this object is selected for printing
+  dim restriction() as string = c.GetRestrictions
+  if ubound(restriction)<0 then return true // No restrictions
+  for i as integer = 0 to ubound(restriction)
+    select case restriction(i)
+    case "All" // Always selected
+      return true
+    case "Selected"
+      if not ob.Selected then return false
+    case "Not Selected"
+      if ob.Selected then return false
+    case "Highlighted"
+      if not ob.IsHighlighted then return false
+    case "Not Highlighted"
+      if ob.IsHighlighted then return false
+    case "Visible"
+      if not ob.IsVisible then return false
+    case "Not Visible"
+      if ob.IsVisible then return false
+    case "Observed"
+      if ob.nObservations<=0 then return false
+    case "Not Observed"
+      if ob.nObservations>0 then return false
+    case "Found"
+    	return ob.Found
+    case "Not Found"
+    	return not ob.Found
+    end select
+  next
+  return true
+end function
+
+//-------------------------------------------------------------------------------------------------
+function ObjectFieldValue(ob as APPlanObject, fld as string) as string
+  dim s as string
+  s=ob.GetValueAsString(fld)
+  if s<>"???" then return s
+  return "Unknown: "+fld
+end function
+  
+//-------------------------------------------------------------------------------------------------
+function ObservationFieldValue(ob as APObservation, fld as string, idx as integer = 0) as string
+  dim s as string
+  s=ob.GetValueAsString(fld,idx)
+  if s<>"???" then return s
+  return "Unknown: "+fld
+end function
+  
+//-------------------------------------------------------------------------------------------------
+function SessionFieldValue(sess as APSession, fld as string) as string
+  dim s as string
+  s=sess.GetValueAsString(fld)
+  if s<>"???" then return s
+  return "Unknown: "+fld
+end function
+  
+//-------------------------------------------------------------------------------------------------
+function IsResourceField(fld as string) as boolean
+  select case fld
+  case "Telescope","Eyepiece","Optical Aid","Filter","Imager","Rating","Magnification","Actual FoV","Found"
+    return true
+  else
+    return false
+  end select
+end function
+
+//-------------------------------------------------------------------------------------------------
+function FormWidthForField(fld as string) as double
+  // Return the fraction of the page width to apply to blank form fields
+  if instr(fld,"Notes")>0 or instr(fld,"Annotations")>0 then 
+    return 4.0
+  else
+    if IsResourceField(fld) then
+      return 1/6*0.9999
+    else
+      return 0.25
+    end if
+  end if
+end function
+
+//-------------------------------------------------------------------------------------------------
+function StyleSelected(oname as string) as integer
+  dim v as integer
+  
+  v=0
+  if c.OptionIncludes(oname,"Bold") then v=v+Table.style_Bold
+  if c.OptionIncludes(oname,"Italic") then v=v+Table.style_Italic
+  if c.OptionIncludes(oname,"Underline") then v=v+Table.style_Underline
+  if c.OptionIncludes(oname,"Inverted") then v=v+Table.style_Inverted
+  if c.OptionIncludes(oname,"Grey") then v=v+Table.style_Gray
+  
+  return v
+end function
+
+//-------------------------------------------------------------------------------------------------
+sub DrawImages(ytop as integer, doImages as boolean, doSatellites as boolean, doConstellation as boolean)
+  dim n,perRow,i,w,x,slop as integer
+  dim y as integer
+  if doImages then n = c.ImageCount(doSatellites) else n = 0
+  if doConstellation then n = n + 1
+  if n<=0 then return
+  slop=c.TextHeight*1.2
+  y=ytop+slop
+  if c.Width>c.Height then perRow=4 else perRow=3
+  w=(c.Width-(perRow-1)*slop)/perRow
+  x=0
+  for i=1 to n
+  	if doConstellation and (i=n) then
+  		c.DrawConstellation(x,y,w,w,"",-999.0,-999.0,c.OptionIncludes("ConstellationChart","Black-on-white"))
+  	else
+    	c.DrawImage(i,doSatellites,x,y,w,c.OptionIncludes("Images","Black-on-white"),c.OptionIncludes("Images","Grey-scale"),true,c.OptionIncludes("Images","Flip E/W"),c.OptionIncludes("Images","Flip N/S"))
+  	end if
+    if (i mod perRow)=0 then
+      x=0
+      y=y+w+slop
+    else
+      x=x+w+slop
+    end if
+  next
+end sub
+  
+//-------------------------------------------------------------------------------------------------
+function ImagesHeight(doImages as boolean, doSatellites as boolean, doConstellation as boolean) as integer
+  dim n,perRow,w,slop as integer
+  if doImages then n = c.ImageCount(doSatellites) else n = 0
+  if doConstellation then n = n + 1
+  if n<=0 then return 0
+  if c.Width>c.Height then perRow=4 else perRow=3
+  slop=c.TextHeight*1.2
+  w=(c.Width-(perRow-1)*slop)/perRow
+  if (n mod perRow)=0 then return (n\perRow)*(w+slop) else return (n\perRow+1)*(w+slop)
+end function
+
+//-------------------------------------------------------------------------------------------------
+function DrawingTemplates(yfrom as integer, diam as integer) as integer
+  dim n,x,xdelta as integer
+  
+  select case c.OptionValue("TemplateBackground")
+  case "Black"
+    c.FillRectangle(0,yfrom,c.Width,diam+c.TextHeight)
+  case "Grey"
+    c.ForeColor(127,127,127)
+    c.FillRectangle(0,yfrom,c.Width,diam+c.TextHeight)
+    c.ForeColor(0,0,0)
+  else
+    c.DrawRectangle(0,yfrom,c.Width,diam+c.TextHeight)
+  end select
+    
+  n=(c.Width-c.TextHeight)\diam
+  if n>1 then xdelta=diam+(c.Width-c.TextHeight-n*diam)/(n-1) else xdelta=0
+  x=c.TextHeight\2
+  for i as integer = 1 to n
+    select case c.OptionValue("TemplateBackground")
+    case "Black","Grey"
+      c.ForeColor(255,255,255)
+      c.FillOval(x,yfrom+c.TextHeight\2,diam,diam)
+      c.ForeColor(0,0,0)
+    else
+      c.DrawOval(x,yfrom+c.TextHeight\2,diam,diam)
+    end select
+    x=x+xdelta
+  next
+  return yfrom+diam+c.TextHeight
+end function
+
+//-------------------------------------------------------------------------------------------------
+dim attachments(-1),nPerRow,imageSize as integer
+
+//-------------------------------------------------------------------------------------------------
+function ObsImageHeight(obs as APObservation) as integer
+  dim i as integer, path as string
+  redim attachments(-1)
+  for i=1 to obs.nAttachments
+    path=obs.Attachment(i).Path
+    if right(path,4)=".jpg" or right(path,5)=".jpeg" then attachments.Append i
+  next
+  if ubound(attachments)<0 then return 0
+  nPerRow=val(c.OptionValue("ObsImagesPerRow"))
+  imageSize=(c.Width-(nPerRow-1)*(c.TextHeight\2))\nPerRow
+  dim nRows as integer
+  nRows=(ubound(attachments)+1)\nPerRow
+  if ((ubound(attachments)+1) mod nPerRow) <> 0 then nRows=nRows+1
+  return nRows*(imageSize+c.TextHeight)+(nRows-1)*c.TextHeight\2
+end function
+
+//-------------------------------------------------------------------------------------------------
+function DrawObsImages(obs as APObservation, yfrom as integer) as integer
+  dim i,x,y as integer
+  y=yfrom
+  x=0
+  for i=0 to ubound(attachments)
+    c.DrawImage(obs.Attachment(attachments(i)).Path, x, y+c.TextHeight, imagesize, imagesize, _
+      c.OptionIncludes("ObsImages","Black-on-white"),c.OptionIncludes("ObsImages","Grey-scale"), _
+      true, obs.Attachment(attachments(i)).Description)
+    if (i+1) mod nPerRow=0 then
+      x=0
+      y=y+imagesize+c.TextHeight+c.TextHeight\2
+    else
+      x=x+imagesize+c.TextHeight\2
+    end if
+  next
+  if x=0 then return y else return y+imagesize+c.TextHeight+c.TextHeight\2
+end function
+
+//-------------------------------------------------------------------------------------------------
+sub FinderCharts(objects() as APPlanObject) 
+
+  // Check for valid resources
+  if c.OptionChecked("FinderChart") or c.OptionChecked("EyepieceChart") then
+	  dim tstest as TelescopeResource = TelescopeResource.Get(c.OptionValue("Telescope"))
+	  if tstest=nil then
+	  	c.Close(true)
+		  print "Please select a valid Resources > Telescope in the print Options"
+		  return
+	  end if
+  end if
+  if c.OptionChecked("EyepieceChart") then
+	  dim eptest as EyepieceResource = EyepieceResource.Get(c.OptionValue("Eyepiece"))
+	  dim imtest as ImagerResource = ImagerResource.Get(c.OptionValue("Imager"))
+	  if eptest=nil and imtest=nil then
+	  	c.Close(true)
+		  print "Please select a valid Resources > Eyepiece and/or Resources > Imager in the print Options"
+		  return
+	  end if
+  end if
+  
+	// Count charts and compute chart placement
+	dim ncharts as integer = 0
+	dim dochart(-1) as integer
+	dim mainchart as integer = -1
+	if c.OptionChecked("AllSkyChart") then
+		ncharts=ncharts+1
+		dochart.Append 0
+		if c.OptionChecked("AllSkyMainChart") then mainchart=dochart.Ubound
+	end if
+	if c.OptionChecked("NakedEyeChart") then
+		ncharts=ncharts+1
+		dochart.Append 1
+		if c.OptionChecked("NakedEyeMainChart") then mainchart=dochart.Ubound
+	end if
+	if c.OptionChecked("FinderChart") then
+		ncharts=ncharts+1
+		dochart.Append 2
+		if c.OptionChecked("FinderMainChart") then mainchart=dochart.Ubound
+	end if
+	if c.OptionChecked("EyepieceChart") then
+		ncharts=ncharts+1
+		dochart.Append 3
+		if c.OptionChecked("EyepieceMainChart") then mainchart=dochart.Ubound
+	end if
+	
+	if ncharts<=0 then
+	  c.Close(true)
+	  print "No charts selected for printing!"
+	  return
+	end if
+
+  if ncharts=3 and mainchart>=0 then
+  	dochart.Append dochart(mainchart)
+  	dochart.Remove mainchart
+  end if
+	
+	dim w as integer = c.Width
+	dim h as integer = c.Height
+	dim th as integer = c.TextHeight
+	
+	const slop = 20
+	
+	dim left(3),top(3),size(3) as integer, fontfactor(3), starfactor(3) as double
+	dim info as Rect
+	
+	if c.OptionChecked("LimitPrintWidth") then
+		w=min(w,c.CMToPixels(CDbl(c.OptionValue("LimitPrintWidth"))))
+	end if
+	if c.OptionChecked("LimitPrintHeight") then
+		h=min(h,c.CMToPixels(CDbl(c.OptionValue("LimitPrintHeight"))))
+	end if
+	
+	if w<h then
+		// Portrait
+		dim n as integer = 0
+		for i as integer = 0 to dochart.Ubound
+			n=n+1
+			fontfactor(i)=0.75
+			dim halfsz as integer = (w-slop)\2
+			dim halfsz2 as integer = min(w,(h-2*th-slop)\2)
+			select case n
+			case 1 // 1st chart
+				left(i)=0
+				top(i)=th
+				select case ncharts
+				case 1
+					size(i)=w
+					fontfactor(i)=1.0
+					info = new Rect(0,top(i)+size(i)+slop,w,h-(top(i)+size(i)+slop))
+				case 2
+					size(i)=halfsz2
+					fontfactor(i)=size(i)/min(c.Width,c.Height)
+				else
+					size(i)=halfsz
+				end select
+			case 2 // 2nd chart
+				select case ncharts
+				case 2
+					left(i)=0
+					top(i)=halfsz2+2*th+slop
+					size(i)=halfsz2
+					
+					info = new Rect(size(i)+slop,th,w-(size(i)+slop),h-th)
+				else
+					left(i)=halfsz+slop
+					top(i)=th
+					size(i)=halfsz
+				end select
+			case 3 // 3rd chart
+				left(i)=0
+				top(i)=halfsz+slop+2*th
+				if ncharts=3 then 
+					size(i)=min(w,h-top(i)) 
+					fontfactor(i)=size(i)/min(c.Width,c.Height)
+					
+					info = new Rect(size(i)+slop,top(i),w-(size(i)+slop),h-top(i))
+				else
+					size(i)=halfsz
+				end if
+			case 4 // 4th chart
+				left(i)=halfsz+slop
+				top(i)=halfsz+slop+2*th
+				size(i)=halfsz
+				
+				info = new Rect(0,top(i)+size(i)+slop,w,h-(top(i)+size(i)+slop))
+			end select
+			starfactor(i)=max(size(i)/min(c.Width,c.Height),0.5)
+		next
+	else
+		// Landscape
+		dim n as integer = 0
+		for i as integer = 0 to dochart.Ubound
+			n=n+1
+			fontfactor(i)=0.5
+			dim halfsz as integer = (h-slop-2*th)\2
+			dim halfsz2 as integer = min(h-th,(w-slop)\2)
+			select case n
+			case 1 // 1st chart
+				left(i)=0
+				top(i)=th
+				select case ncharts
+				case 1
+					size(i)=h
+					fontfactor(i)=1.0
+					
+					info = new Rect(size(i)+slop,top(i),w-(size(i)+slop),h-top(i))
+				case 2
+					size(i)=halfsz2
+					fontfactor(i)=size(i)/min(c.Width,c.Height)
+				else
+					size(i)=halfsz
+				end select
+			case 2 // 2nd chart
+				select case ncharts
+				case 2
+					left(i)=halfsz2+slop
+					top(i)=th
+					size(i)=halfsz2
+					
+					info = new Rect(0,top(i)+size(i)+slop,w,h-(top(i)+size(i)+slop))
+				else
+					left(i)=0
+					top(i)=halfsz+slop+2*th
+					size(i)=halfsz
+				end select
+			case 3 // 3rd chart
+				left(i)=halfsz+slop
+				top(i)=th
+				if ncharts=3 then 
+					size(i)=min(h-th,w-left(i)) 
+					fontfactor(i)=size(i)/min(c.Width,c.Height)
+					
+					info = new Rect(left(i),top(i)+size(i)+slop,w-left(i),h-(top(i)+size(i)+slop))
+				else 
+					size(i)=halfsz
+				end if
+			case 4 // 4th chart
+				left(i)=halfsz+slop
+				top(i)=halfsz+slop+2*th
+				size(i)=halfsz
+				
+				info = new Rect(left(i)+size(i)+slop,th,w-(left(i)+size(i)+slop),h-th)
+			end select
+		
+			starfactor(i)=max(size(i)/min(c.Width,c.Height),0.5)
+		next
+	end if
+	
+	Preferences.Group("FoV").Save
+	Preferences.Group("Sky").Save
+	for iobject as integer = 0 to objects.Ubound
+		if c.Aborted then exit
+		if iobject>0 then c.NewPage(objects(iobject).ID) else c.ProgressText(objects(iobject).ID)
+			
+		c.ObjIDs.Append objects(iobject).ID
+		
+		dim lastFoV as double = 0.0
+		dim lastFoVTitle as string = ""
+		for ichart as integer = 0 to dochart.Ubound
+      if c.Aborted then exit
+			dim l as integer = left(ichart)
+			dim t as integer = top(ichart)
+			dim sz as integer = size(ichart)
+			dim ff as double = fontfactor(ichart)
+			dim sf as double = starfactor(ichart)
+			
+			select case dochart(ichart)
+			case 3
+				// Eyepiece chart
+    
+				dim fov as double = 1.0
+				dim ts as TelescopeResource = TelescopeResource.Get(c.OptionValue("Telescope"))
+				dim e as EyepieceResource
+				dim a as OpticalAidResource
+				dim im as ImagerResource
+				SelectEyepiece(objects(iobject),ts,e,a,im)
+		
+				dim combo as string, fovp as Pair
+				if e<>nil then
+		      combo = ts.Name+" + "+e.Name
+					fov = ts.ActualFoV(e,a)
+				else
+					combo = ts.Name+" + "+im.Name
+					if im.HasGuider then
+						dim gxy as Pair = im.GuiderCenter(ts,a)
+						dim gwh as Pair = im.GuiderSize(ts,a)
+						fovp = ts.ActualFoV(im,a,false)	
+						fov=sqrt(fovp.Left^2+fovp.Right^2)
+						if gxy.Left=0.0 then	
+							fov = max(fov,2.0*gxy.Right+gwh.Right)
+						else
+							fov = max(fov,2.0*gxy.Left+gwh.Left)
+						end if		
+					else
+						fovp = ts.ActualFoV(im,a,true)
+						fov=sqrt(fovp.Left^2+fovp.Right^2)
+					end if
+					fovp = ts.ActualFoV(im,a,false)
+					if c.OptionChecked("EyepieceImagerSensor") then c.FovRectangleOffset(im.Name,fovp.Left,fovp.Right,0.0,0.0,0.0,true)
+					if im.HasGuider then
+						dim gxy as Pair = im.GuiderCenter(ts,a)
+						dim gwh as Pair = im.GuiderSize(ts,a)
+						if c.OptionChecked("EyepieceGuiderSensor") then c.FovRectangleOffset("",gwh.Left,gwh.Right,0.0,gxy.Left,gxy.Right,true)
+						if c.OptionChecked("EyepieceGuiderTrack") then 
+							if gxy.Left=0.0 then
+								c.FoVCircleOffset("",2.0*gxy.Right+gwh.Right,0.0,0.0,true)
+								c.FoVCircleOffset("",2.0*gxy.Right-gwh.Right,0.0,0.0,true)
+							else
+								c.FoVCircleOffset("",2.0*gxy.Left+gwh.Left,0.0,0.0,true)
+								c.FoVCircleOffset("",2.0*gxy.Left-gwh.Left,0.0,0.0,true)								
+							end if
+						end if
+					end if
+				end if
+				if a<>nil then combo = combo + " + "+a.Name
+			
+				dim actualFoV as double = fov
+				fov=fov*CDbl(c.OptionValue("EyepieceZoomFactor"))*0.01
+				if fov-ActualFoV>0.001 then c.FoVCircle("Actual FoV",ActualFoV)
+				dim maglimit as double = 8.0
+				if c.OptionChecked("EyepieceMagLimitCompute") then
+					maglimit = ts.MagnitudeLimit
+				else
+					maglimit = CDbl(c.OptionValue("EyepieceMagLimitSet"))
+				end if
+	      dim etype as string
+	      if e<>nil then etype="Eyepiece" else etype="Imager"
+				lastFoV=EyepieceChart(objects(iobject),lastFoV,lastFoVTitle,l,t,sz,maglimit,c.OptionChecked("EyepieceFlipEW"),c.OptionChecked("EyepieceFlipNS"), fov, c.OptionChecked("EyepieceAltAzRotate"), c.OptionChecked("BoWStars"), ff,sf, c.OptionValue("EyepieceStellarCatalogue"), CDbl(c.OptionValue("EyepieceLabelDensity")), combo, etype)
+			  lastFoV=ActualFoV
+			  lastFoVTitle=etype
+
+	    case 2
+				// Finder scope chart
+				dim fov as double = 1.0
+				if c.OptionChecked("UseTelescopeFinder") then
+					dim r as TelescopeResource = TelescopeResource.Get(c.OptionValue("Telescope"))
+					if r<>nil then
+						fov = r.FinderFoV
+					end if
+				elseif c.OptionChecked("UseFinderResource") then
+					dim r as TelescopeResource = TelescopeResource.Get(c.OptionValue("UseFinderResource"))
+					if r<>nil then
+						fov = r.FoV
+					end if
+				else
+					fov=CDbl(c.OptionValue("UseFinderFoV"))
+				end if
+				dim actualFoV as double = fov
+				fov=fov*CDbl(c.OptionValue("FinderZoomFactor"))*0.01
+				if fov-ActualFoV>0.001 then c.FoVCircle("Actual FoV",ActualFoV)
+				dim maglimit as double = 8.0
+				if c.OptionChecked("FinderMagLimitCompute") then
+					maglimit = TelescopeResource.MagnitudeLimit(CDbl(c.OptionValue("FinderMagLimitCompute")))
+				else
+					maglimit = CDbl(c.OptionValue("FinderMagLimitSet"))
+				end if
+				lastFoV=FinderScopeChart(objects(iobject),lastFoV,lastFoVTitle,l,t,sz,maglimit,c.OptionChecked("FinderFlipEW"),c.OptionChecked("FinderFlipNS"), fov, c.OptionChecked("FinderAltAzRotate"), c.OptionChecked("BoWStars"), ff,sf, c.OptionValue("FinderStellarCatalogue"), CDbl(c.OptionValue("FinderLabelDensity")))
+			  lastFoV=ActualFoV
+			  lastFoVTitle="Finder"
+		
+			case 1
+				// Naked-eye chart
+				lastFoV=NakedEyeChart(objects(iobject),lastFoV,lastFoVTitle,l,t,sz,CDbl(c.OptionValue("NakedEyeMagLimit")),c.OptionChecked("NakedEyeFlipEW"),c.OptionChecked("NakedEyeFlipNS"), CDbl(c.OptionValue("NakedEyeFoV")),c.OptionChecked("NakedEyeAltAzRotate"), c.OptionChecked("BoWStars"), ff,sf, CDbl(c.OptionValue("NakedEyeLabelDensity")))
+			
+			case 0
+				// All-sky chart
+				AllSkyChart(objects(iobject),lastFoV,lastFoVTitle,l,t,sz,CDbl(c.OptionValue("AllSkyMagLimit")),c.OptionChecked("AllSkyFlipEW"),c.OptionChecked("AllSkyFlipNS"), c.OptionChecked("BoWStars"), ff, sf)
+			end select		
+	  next
+	  if c.Aborted then exit
+	  			
+		if c.OptionChecked("ObjectNewPage") and (c.OptionChecked("FCTemplates") or c.OptionChecked("ShowObjectInfo") or c.OptionChecked("DSSImages") or c.OptionChecked("Satellites") or c.OptionChecked("ConstellationChart")) then
+			info = new Rect(0,0,c.Width,c.Height)
+			c.NewPage(objects(iobject).ID)
+		end if
+		
+		dim imageRect as Rect = info
+
+		if c.OptionChecked("ShowObjectInfo") then
+			imageRect = DrawObjectInfo(objects(iobject),info)
+		end if
+		if c.Aborted then exit
+			
+		if c.OptionChecked("FCImages") or c.OptionChecked("FCSatellites") or c.OptionChecked("FCConstellationChart") then 
+			imageRect=DrawObjectImages(imageRect,c.OptionChecked("FCImages"),c.OptionChecked("FCSatellites"),c.OptionChecked("FCConstellationChart"))	
+		end if
+		
+		if c.OptionChecked("FCTemplates") then
+			imageRect = DrawingTemplates(imageRect, CDbl(c.OptionValue("FCTemplates")))
+		end if
+		if c.Aborted then exit
+	next
+
+	c.Close
+	Preferences.Group("FoV").Restore
+	Preferences.Group("Sky").Restore
+end sub
+
+//-------------------------------------------------------------------------------------------------
+sub SelectEyepiece(ob as APPlanObject, t as TelescopeResource, byref ep as EyepieceResource, byref oa as OpticalAidResource, byref im as ImagerResource)
+	if c.OptionChecked("OpticalAid") then oa = OpticalAidResource.Get(c.OptionValue("OpticalAid")) else oa=nil
+	if c.OptionChecked("ImUseDefaults") then 
+		im = ImagerResource.Get(c.OptionValue("Imager"))
+		return
+	else
+		im=nil
+	end if
+	ep = EyepieceResource.Get(c.OptionValue("Eyepiece"))
+	if c.OptionChecked("EPUseDefaults") then return
+	if c.OptionChecked("EPODM") then
+		oa=nil
+  	dim m as double = ob.ODM
+  	dim bestm as double
+  	if m<=0.0 or t=nil then
+  		return
+  	else
+  		dim beste as EyepieceResource = APResource.BestEyepieceForMagnification(t,m,bestm)
+  		if beste=nil then
+  			return
+  		else
+  			ep=beste
+  			return
+  		end if
+  	end if
+	end if
+	if c.OptionChecked("EPOAODM") then
+		dim m as double = ob.ODM
+  	dim bestm as double
+  	dim besta as OpticalAidResource
+  	if m<=0.0 or t=nil then
+  		return
+  	else
+  		dim beste as EyepieceResource = APResource.BestEyepieceAndOpticalAidForMagnification(t,m,bestm,besta)
+  		if beste=nil then
+  			return
+  		else
+  			ep=beste
+  			oa=besta
+  			return
+  		end if
+  	end if
+	end if
+	if c.OptionChecked("EPFrame") then
+		dim r as double = max(ob.Size1,ob.Size2)
+		if r<=0.0 then return
+		r=r*CDbl(c.OptionValue("EPFrame"))*0.01/60.0
+		dim minep as EyepieceResource = nil
+		dim rmin as double = r*100.0
+		for iep as integer = 1 to EyepieceResource.Count
+			dim e as EyepieceResource = EyepieceResource.Get(iep)
+		  dim fov as double = t.ActualFoV(e,nil)
+		  if fov>r and fov<rmin then
+		  	rmin=fov
+		  	minep=e
+		  end if
+		next
+		if minep<>nil then 
+			ep=minep
+			oa=nil
+		end if
+		return
+	end if	
+	if c.OptionChecked("EPOAFrame") then
+		dim r as double = max(ob.Size1,ob.Size2)
+		if r<=0.0 then return
+		r=r*CDbl(c.OptionValue("EPFrame"))*0.01/60.0
+		dim minep as EyepieceResource = nil
+		dim minoa as OpticalAidResource = nil
+		dim rmin as double = r*100.0
+		for iep as integer = 1 to EyepieceResource.Count
+			dim e as EyepieceResource = EyepieceResource.Get(iep)
+			for ioa as integer = 0 to OpticalAidResource.Count
+				dim o as OpticalAidResource 
+				if ioa=0 then o = nil else o = OpticalAidResource.Get(ioa)
+		    dim fov as double = t.ActualFoV(e,o)
+		    if fov>r and fov<rmin then
+		  	  rmin=fov
+		  	  minep=e
+		  	  minoa=o
+		    end if
+			next
+		next
+		if minep<>nil then 
+			ep=minep
+			oa=minoa
+		end if
+		return
+	end if	
+end sub
+
+//-------------------------------------------------------------------------------------------------
+function DrawObjectImages(r as Rect, doImages as boolean, doSatellites as boolean, doConstellation as boolean) as Rect
+  dim n,perRow,i,w,x,slop as integer
+  dim y as integer
+  if r=nil then return nil
+  if doImages then n = c.ImageCount(doSatellites) else n = 0
+  if doConstellation then n = n + 1
+  if n<=0 then return r
+  perRow=val(c.OptionValue("FCImagesPerRow"))	
+  slop=c.TextHeight*1.2
+  
+  w=(r.width-(perRow-1)*slop)\perRow
+  if r.height-slop<w then w=r.height-slop
+  if w<5 then return r
+  x=r.left
+  y=r.top+slop
+  for i=1 to n
+  	if doConstellation and (i=n) then
+  		c.DrawConstellation(x,y,w,w,"",-999.0,-999.0,c.OptionIncludes("FCConstellationChart","Black-on-white"))
+  	else
+    	c.DrawImage(i,doSatellites,x,y,w,c.OptionIncludes("FCImages","Black-on-white"),c.OptionIncludes("FCImages","Grey-scale"),true,c.OptionIncludes("FCImages","Flip E/W"),c.OptionIncludes("FCImages","Flip N/S"))
+  	end if
+    if (i mod perRow)=0 then
+      x=r.left
+      y=y+w+slop
+      if y+w>r.bottom then exit
+    else
+      x=x+w+slop
+    end if
+  next
+  if x=r.left then 
+  	return new Rect(r.left,y-slop,r.width,r.bottom-(y-slop))
+  else
+  	return new Rect(r.left,y+w,r.width,r.bottom-(y+w))
+  end if
+end function
+  
+//-------------------------------------------------------------------------------------------------
+function NiceFoV(d as double) as string
+	if d>=1.0 then
+		return DoubleToStr(d,-1)+DegreeSymbol
+	elseif d>1.0/60.0 then
+		return DoubleToStr(d*60.0,-1)+"'"
+	else
+		return DoubleToStr(d*3600.0,-1)+""""
+	end if
+end function
+
+//-------------------------------------------------------------------------------------------------
+sub DSOs(doDSO as string, doDSOLabels as string, doDSOMags as string)
+	if not c.OptionChecked(doDSO) then return
+	c.FOVCatalog(c.OptionValue(doDSO), true, c.OptionChecked(doDSOLabels))
+	c.FoVOption(Canvas.FoVopt_Labels_Magnitude,c.OptionChecked(doDSOMags))
+end sub
+
+//-------------------------------------------------------------------------------------------------
+function EyepieceChart(ob as APPlanObject, lastFoV as double, lastFoVTitle as string, left as integer, top as integer, size as integer, maglimit as double, flipEW as boolean, flipNS as boolean, fov as double, altazrotate as boolean, bow as boolean, fontfactor as double, starfactor as double, cat as string, labeldensity as double, combo as string, etype as string) as double
+	c.Target(ob)
+	c.FoVSize(fov)
+	
+	BasicFoVOptions
+	c.FOVOption(Canvas.fovopt_Orientation_AltAzRotation, altazrotate)
+	c.FOVOption(Canvas.fovopt_Orientation_FlipHorizontal, flipEW)
+	c.FOVOption(Canvas.fovopt_Orientation_FlipVertical, flipNS)
+	
+	c.FoVOption(Canvas.fovopt_Display_Images,c.OptionChecked("EyepieceOptImages"))
+	c.FoVOption(Canvas.fovopt_Display_StellarMagnitudeScale,c.OptionChecked("EyepieceOptScale"))
+	c.FoVOption(Canvas.fovopt_Display_Aperture,c.OptionChecked("EyepieceOptAperture"))
+	c.FoVOption(Canvas.fovopt_Labels_Magnitude,c.OptionChecked("EyepieceOptMagnitude"))
+	c.FoVOption(Canvas.fovopt_Labels_PositionAngle,c.OptionChecked("EyepieceOptPosAngle"))
+	c.FoVOption(Canvas.fovopt_Labels_Separation,c.OptionChecked("EyepieceOptSep"))
+	c.FoVOption(Canvas.fovopt_Display_CardinalPoints,true)
+	c.FoVOption(Canvas.fovopt_Display_PlanObjectAtChartCentreOnly,c.OptionChecked("EyepiecePlanObj"))
+	c.FoVOption(Canvas.fovopt_SolarSystem_ShowSun,c.OptionChecked("FinderSSSun"))
+	c.FoVOption(Canvas.fovopt_SolarSystem_ShowMoon,c.OptionChecked("FinderSSMoon"))
+	c.FoVOption(Canvas.fovopt_SolarSystem_ShowPlanets,c.OptionChecked("FinderSSPlanets"))
+	c.FoVOption(Canvas.fovopt_SolarSystem_ShowComets,c.OptionChecked("FinderSSComets"))
+	c.FoVOption(Canvas.fovopt_SolarSystem_ShowMinorPlanets,c.OptionChecked("FinderSSMinorPlanets"))
+
+	c.FOVCatalog("", false, false)
+	c.FOVCatalog(cat, true, true)
+	dim lblmag as double = maglimit*labeldensity*0.01
+
+	c.FoVMagnitudeLimits(maglimit,lblmag,maglimit,15.0)
+	c.FoVStarLimits(0.0,maglimit)
+	DSOs("EyepieceDSOs","EyepieceDSOLabels","EyepieceDSOMags")
+	c.DrawFoV(left,top,size,bow,NiceFoV(fov)+" "+etype+" Chart ("+combo+"). To mag: "+DoubleToStr(maglimit,-1),fontfactor,starfactor)
+  return fov
+end function
+
+//-------------------------------------------------------------------------------------------------
+function FinderScopeChart(ob as APPlanObject, lastFoV as double, lastFoVTitle as string, left as integer, top as integer, size as integer, maglimit as double, flipEW as boolean, flipNS as boolean, fov as double, altazrotate as boolean, bow as boolean, fontfactor as double, starfactor as double, cat as string, labeldensity as double) as double
+	c.Target(ob)
+	c.FoVSize(fov)
+	
+	BasicFoVOptions
+	c.FOVOption(Canvas.fovopt_Orientation_AltAzRotation, altazrotate)
+	c.FOVOption(Canvas.fovopt_Orientation_FlipHorizontal, flipEW)
+	c.FOVOption(Canvas.fovopt_Orientation_FlipVertical, flipNS)
+	
+	c.FoVOption(Canvas.fovopt_Constellations_Borders,c.OptionChecked("FinderOptConst"))
+	c.FoVOption(Canvas.fovopt_Constellations_Figures,c.OptionChecked("FinderOptConst"))
+	c.FoVOption(Canvas.fovopt_Constellations_Names,c.OptionChecked("FinderOptConst"))
+	c.FoVOption(Canvas.fovopt_Display_Images,c.OptionChecked("FinderOptImages"))
+	c.FoVOption(Canvas.fovopt_Reticles_RigelQF,c.OptionChecked("FinderOptRigel"))
+	c.FoVOption(Canvas.fovopt_Reticles_Telrad,c.OptionChecked("FinderOptTelrad"))
+	c.FoVOption(Canvas.fovopt_Display_StellarMagnitudeScale,c.OptionChecked("FinderOptScale"))
+	c.FoVOption(Canvas.fovopt_Display_Aperture,c.OptionChecked("FinderOptAperture"))
+	c.FoVOption(Canvas.fovopt_Display_CardinalPoints,true)
+	c.FoVOption(Canvas.fovopt_Display_PlanObjectAtChartCentreOnly,c.OptionChecked("FinderPlanObj"))
+	c.FoVOption(Canvas.fovopt_SolarSystem_ShowSun,c.OptionChecked("EyepieceSSSun"))
+	c.FoVOption(Canvas.fovopt_SolarSystem_ShowMoon,c.OptionChecked("EyepieceSSMoon"))
+	c.FoVOption(Canvas.fovopt_SolarSystem_ShowPlanets,c.OptionChecked("EyepieceSSPlanets"))
+	c.FoVOption(Canvas.fovopt_SolarSystem_ShowComets,c.OptionChecked("EyepieceSSComets"))
+	c.FoVOption(Canvas.fovopt_SolarSystem_ShowMinorPlanets,c.OptionChecked("EyepieceSSMinorPlanets"))
+
+	
+  c.FOVCatalog("", false, false)
+	c.FOVCatalog(cat, true, true)
+  dim lblmag as double = maglimit*labeldensity*0.01
+	c.FoVMagnitudeLimits(maglimit,lblmag,maglimit,9.0)
+	c.FoVStarLimits(0.0,maglimit)
+	DSOs("FinderDSOs","FinderDSOLabels","FinderDSOMags")
+	if lastFoV>0.0 and lastFoV<fov then c.FoVCircle(lastFoVTitle,lastFoV)
+	
+	c.DrawFoV(left,top,size,bow,NiceFoV(fov)+" Finder scope Chart. To mag: "+DoubleToStr(maglimit,-1),fontfactor,starfactor)
+  return fov
+end function
+
+//-------------------------------------------------------------------------------------------------
+function NakedEyeChart(ob as APPlanObject, lastFoV as double, lastFoVTitle as string, left as integer, top as integer, size as integer, maglimit as double, flipEW as boolean, flipNS as boolean, fov as double, altazrotate as boolean, bow as boolean, fontfactor as double, starfactor as double, labeldensity as double) as double
+	c.Target(ob)
+	c.FoVSize(fov)
+	
+	BasicFoVOptions
+	c.FOVOption(Canvas.fovopt_Orientation_AltAzRotation, altazrotate)
+	c.FOVOption(Canvas.fovopt_Orientation_FlipHorizontal, flipEW)
+	c.FOVOption(Canvas.fovopt_Orientation_FlipVertical, flipNS)
+	
+	c.FoVOption(Canvas.fovopt_Constellations_Borders,c.OptionChecked("NakedEyeOptConst"))
+	c.FoVOption(Canvas.fovopt_Constellations_Figures,c.OptionChecked("NakedEyeOptConst"))
+	c.FoVOption(Canvas.fovopt_Constellations_Names,c.OptionChecked("NakedEyeOptConst"))
+	c.FoVOption(Canvas.fovopt_Display_Images,c.OptionChecked("NakedEyeOptImages"))
+	c.FoVOption(Canvas.fovopt_Reticles_RigelQF,c.OptionChecked("NakedEyeOptRigel"))
+	c.FoVOption(Canvas.fovopt_Reticles_Telrad,c.OptionChecked("NakedEyeOptTelrad"))
+	c.FoVOption(Canvas.fovopt_Display_StellarMagnitudeScale,c.OptionChecked("NakedEyeOptScale"))
+	c.FoVOption(Canvas.fovopt_Display_PlanObjectAtChartCentreOnly,c.OptionChecked("NakedEyePlanObj"))
+	c.FoVOption(Canvas.fovopt_SolarSystem_ShowSun,c.OptionChecked("NakedEyeSSSun"))
+	c.FoVOption(Canvas.fovopt_SolarSystem_ShowMoon,c.OptionChecked("NakedEyeSSMoon"))
+	c.FoVOption(Canvas.fovopt_SolarSystem_ShowPlanets,c.OptionChecked("NakedEyeSSPlanets"))
+	c.FoVOption(Canvas.fovopt_SolarSystem_ShowComets,c.OptionChecked("NakedEyeSSComets"))
+	c.FoVOption(Canvas.fovopt_SolarSystem_ShowMinorPlanets,c.OptionChecked("NakedEyeSSMinorPlanets"))
+	
+	c.FOVCatalog("", false, false)
+	c.FOVCatalog("Bright Star Catalogue", true, true)
+  dim lblmag as double = maglimit*labeldensity*0.01
+
+	c.FoVMagnitudeLimits(maglimit,lblmag,maglimit,9.0)
+	c.FoVStarLimits(0.0,maglimit)
+	DSOs("NakedEyeDSOs","NakedEyeDSOLabels","NakedEyeDSOMags")
+	if lastFoV>0.0 and lastFoV<fov then c.FoVCircle(lastFoVTitle,lastFoV)
+	c.DrawFoV(left,top,size,bow,NiceFoV(fov)+" Naked-eye Chart. To mag: "+DoubleToStr(maglimit,-1),fontfactor,starfactor)
+  return fov
+end function
+
+//-------------------------------------------------------------------------------------------------
+sub AllSkyChart(ob as APPlanObject, lastFoV as double, lastFoVTitle as string, left as integer, top as integer, size as integer, maglimit as double, flipEW as boolean, flipNS as boolean, bow as boolean, fontfactor as double, starfactor as double)
+	SetSkyOptions
+	c.SkyOption(Canvas.skyopt_Orientation_FlipEastWest, flipEW)
+	c.SkyOption(Canvas.skyopt_Orientation_FlipNorthSouth, flipNS)
+	c.SkyStarMagnitudeLimit=maglimit
+	c.DrawSky(left,top,size,bow,"All-Sky Chart. To mag: "+DoubleToStr(maglimit,-1),fontfactor)
+end sub
+
+//-------------------------------------------------------------------------------------------------
+sub BasicFoVOptions()
+	for i as integer = 0 to 40
+		c.FoVOption(i,false)
+	next
+end sub
+
+//-------------------------------------------------------------------------------------------------
+sub SetSkyOptions()
+	c.SkyOption(Canvas.skyopt_Constellations_Borders,false)   // Constellations -> Borders
+	c.SkyOption(Canvas.skyopt_Constellations_Figures,c.OptionChecked("SkyOptConst"))   // Constellations -> Figures
+	c.SkyOption(Canvas.skyopt_Constellations_Names,c.OptionChecked("SkyOptConst"))   // Constellations -> Names
+	c.SkyOption(Canvas.skyopt_Lines_AirMass,false)   // Lines -> Air Mass
+	c.SkyOption(Canvas.skyopt_Lines_AltAzimuthGrid,c.OptionChecked("SkyOptAltAzGrid"))   // Lines -> Alt-Azimuth grid
+	c.SkyOption(Canvas.skyopt_Lines_Ecliptic,c.OptionChecked("SkyOptEcliptic"))   // Lines -> Ecliptic
+	c.SkyOption(Canvas.skyopt_Lines_EquatorialGrid,c.OptionChecked("SkyOptEquGrid"))   // Lines -> Equatorial grid
+	c.SkyOption(Canvas.skyopt_Lines_FixedAltitude,false)  // Lines -> Fixed Altitude
+	c.SkyOption(Canvas.skyopt_Lines_GalacticEquator,false)   // Lines -> Galactic equator
+	c.SkyOption(Canvas.skyopt_Lines_MilkyWayOutline,c.OptionChecked("SkyOptMWay"))  // Lines -> Milky Way outline
+	c.SkyOption(Canvas.skyopt_Lines_TelescopeRADec,false)   // Lines -> Telescope RA/Dec
+	c.SkyOption(Canvas.skyopt_Objects_AlignmentStars,c.OptionChecked("SkyOptAlignmentStars"))   // Objects -> Alignment stars
+	c.SkyOption(Canvas.skyopt_Objects_BolideShowerRadiants,false)  // Objects -> Bolide shower radiants
+	c.SkyOption(Canvas.skyopt_Objects_CatalogueObjects,false)   // Objects -> Catalogue objects
+	c.SkyOption(Canvas.skyopt_Objects_FieldOfView,true)   // Objects -> Field of view (FoV)
+	c.SkyOption(Canvas.skyopt_Objects_MeteorShowerRadiants,false)   // Objects -> Meteor shower radiants
+	c.SkyOption(Canvas.skyopt_Objects_Stars,true)   // Objects -> Stars
+	c.SkyOption(Canvas.skyopt_Objects_SunMoonPlanets,c.OptionChecked("SkyOptSunMoonPlanets"))   // Objects -> Sun/Moon/Planets
+	c.SkyOption(Canvas.skyopt_PlanObjects_NumberOfObservations,false)   // Plan Objects -> Number of observations
+	c.SkyOption(Canvas.skyopt_PlanObjects_Objects,c.OptionChecked("SkyOptObjects"))   // Plan Objects -> Objects
+	dim n as integer = 0
+	select case c.OptionValue("SkyOptObjects")
+	case "All"
+		n=0
+	case "Selected"
+		n=1
+	case "Highlighted"
+		n=2
+	case "Observed"
+		n=3
+	case "Not observed"
+		n=4
+	end select
+	c.SkyOptionChoice(Canvas.skyopt_PlanObjects_Objects,n)
+	c.SkyOption(Canvas.skyopt_PlanObjects_ObjectSequence,false)   // Plan Objects -> Object sequence
+	c.SkyOption(Canvas.skyopt_PlanObjects_ShowID,c.OptionChecked("SkyOptObjects"))   // Plan Objects -> Show ID
+	c.SkyOption(Canvas.skyopt_PlanObjects_ShowName,false)  // Plan Objects -> Show Name
+	c.SkyOption(Canvas.skyopt_Visibility_Contours,false)   // Visibility -> Contours
+	c.SkyOption(Canvas.skyopt_Visibility_FixedHorizon,false)   // Visibility -> Fixed Horizon
+	c.SkyOption(Canvas.skyopt_Visibility_LightDome,false)   // Visibility -> Light dome
+	c.SkyOption(Canvas.skyopt_Visibility_Limits,false)   // Visibility -> Limits
+	c.SkyOption(Canvas.skyopt_Visibility_SiteHorizon,c.OptionChecked("SkyOptSiteHorizon"))  // Visibility -> Site Horizon
+	c.SkyOption(Canvas.skyopt_Visibility_TwilightDaylightColours,false)   // Visibility -> Twilight/daylight colours
+	c.SkyOption(Canvas.skyopt_Visibility_UseNELMForStarVisibility,false)   // Visibility -> Use NELM for star visibility
+end sub
+
+//-------------------------------------------------------------------------------------------------
+function GetObjectField(ob as APPlanObject, fld as string) as string
+  select case fld
+  case "ODM Best Eyepiece"
+  	dim m as double = ob.ODM
+  	dim bestm as double
+  	dim t as TelescopeResource = TelescopeResource.Get(c.OptionValue("Telescope"))
+  	if m<=0.0 or t=nil then
+  		return "n/a"
+  	else
+  		dim beste as EyepieceResource = APResource.BestEyepieceForMagnification(t,m,bestm)
+  		if beste=nil then
+  			return "n/a"
+  		else
+  			return beste.Name+" ("+str(round(bestm))+"X)"
+  		end if
+  	end if
+  case "ODM Best Eyepiece + Optical Aid"
+  	dim m as double = ob.ODM
+  	dim bestm as double
+  	dim besta as OpticalAidResource
+  	dim t as TelescopeResource = TelescopeResource.Get(c.OptionValue("Telescope"))
+  	if m<=0.0 or t=nil then
+  		return "n/a"
+  	else
+  		dim beste as EyepieceResource = APResource.BestEyepieceAndOpticalAidForMagnification(t,m,bestm,besta)
+  		if beste=nil then
+  			return "n/a"
+  		elseif besta=nil then
+  			return beste.Name+" ("+str(round(bestm))+"X)"
+  		else
+  			return beste.Name+" + "+besta.Name+" ("+str(round(bestm))+"X)"
+  		end if
+  	end if
+  case "Annotations" 
+  	dim ann() as Annotation = ob.Annotations
+  	dim s(-1) as string
+  	for j as integer = 0 to ubound(ann)
+  		if ann(j).Notes<>"" then
+  			s.Append ann(j).Notes
+  		end if
+  	next
+    return Join(s,EndofLine)
+  else
+    return ob.GetValueAsString(fld)
+  end select
+  return "n/a"
+end function
+
+//-------------------------------------------------------------------------------------------------
+function DrawObjectInfo(ob as APPlanObject, r as Rect) as Rect
+	dim fldobj() as string
+	// Get object fields
+	fldobj=c.GetFields(1)
+	
+  // Reject all fields that are blank
+  for i as integer = ubound(fldobj) downto 0
+    dim s as string = GetObjectField(ob,fldobj(i))
+    if s="" or s="???" or s="n/a" then fldobj.Remove i
+  next
+  
+  if fldobj.Ubound<0 then
+  	return new Rect(r)
+  end if
+
+  if r.width<r.height then
+	  dim t as new Table(0,2)
+	  t.ColumnWidth(1)=40.0
+	  for i as integer = 0 to fldobj.Ubound
+	  	dim s1 as string = fldobj(i)
+	  	dim s2 as string = GetObjectField(ob,fldobj(i))
+	  	t.Cell(i+1,1)=s1
+	  	t.Cell(i+1,2)=s2
+	  	dim rh as double = max(c.TextHeight(s1,r.width*0.35)/c.TextHeight,c.TextHeight(s2,r.width*0.58)/c.TextHeight)
+	  	if rh>1.5 then t.RowHeight(i+1)=100.0*rh
+	  	t.CellStyle(i+1,1) = Table.style_Bold
+	  	if i<fldobj.Ubound then t.AddRow
+	  next
+	  dim top as integer = c.DrawTable(t,r,Table.grid_Thin)
+	  return new Rect(r.Left,top,r.Width,r.bottom-top)
+  else
+	  dim t as new Table(0,2)
+	  t.ColumnWidth(1)=30.0
+	  dim row as integer = 1
+	  dim x as integer = r.left
+	  dim ntables as integer = 1
+	  for i as integer = 0 to fldobj.Ubound
+	  	dim s1 as string = fldobj(i)
+	  	dim s2 as string = GetObjectField(ob,fldobj(i))
+	  	t.Cell(row,1)=s1
+	  	t.Cell(row,2)=s2
+	  	t.CellStyle(row,1) = Table.style_Bold
+	    dim rh as double = max(c.TextHeight(s1,r.width*0.25)/c.TextHeight,c.TextHeight(s2,r.width*0.68)/c.TextHeight)
+	  	if rh>1.5 then t.RowHeight(row)=100.0*rh
+      if c.TableHeight(t,r.width\2,Table.grid_Thin)>r.height then
+	  		t.DeleteRow(row)
+	  		call c.DrawTable(t,x,r.top,r.width\2,r.height,Table.grid_Thin)
+	  		ntables=ntables+1
+	  		if ntables>2 then exit
+	  		t = new Table(1,2)
+	  		t.ColumnWidth(1)=30.0
+	  		x = x + r.width\2
+	  		row = 1
+	  	  t.Cell(row,1)=s1
+	  	  t.Cell(row,2)=s2
+	      rh = max(c.TextHeight(s1,r.width*0.25)/c.TextHeight,c.TextHeight(s2,r.width*0.68)/c.TextHeight)
+	  	  if rh>1.5 then t.RowHeight(row)=100.0*rh
+	  	  t.CellStyle(row,1) = Table.style_Bold	
+	  	end if
+	  	row=row+1
+	  	if i<fldobj.Ubound then t.AddRow
+	  next
+	  select case ntables
+	  case 1
+	  	call c.DrawTable(t,x,r.top,r.width\2,r.height,Table.grid_Thin)
+	  	return new Rect(r.left+r.Width\2,r.top,r.Width\2,r.height)
+	  case 2
+	  	dim top as integer = c.DrawTable(t,x,r.top,r.width\2,r.height,Table.grid_Thin)
+	  	return new Rect(r.Left+r.Width\2,top,r.Width\2,r.bottom-top)
+	  else
+	  	return nil
+	  end select
+  end if
+end function
+
+//-------------------------------------------------------------------------------------------------
+function DrawingTemplates(r as Rect, rdiam as double) as Rect
+  dim x,y as integer
+ 
+  dim diam as integer = c.cmToPixels(rdiam)
+  dim slop as integer = c.TextHeight\2
+  dim sdiam as integer = diam+2*slop
+  dim sslop as integer = c.TextHeight\2
+  
+  r.top=r.top+c.TextHeight
+  r.Height=r.Height-c.TextHeight
+  
+  // Will any templates fit into remaining space?
+  if min(r.Width,r.Height)<sdiam then return r
+  	
+  y = r.Top
+  x = r.Left-sdiam-sslop
+  
+  for i as integer = 1 to val(c.OptionValue("nFCTemplates"))
+  	x=x+sdiam+sslop
+    if x+sdiam>r.Right then
+    	x=r.Left
+    	y=y+sdiam+sslop
+    end if
+    if y+sdiam>r.Bottom then exit
+
+	  select case c.OptionValue("FCTemplateBackground")
+	  case "Black"
+	    c.FillRectangle(x,y,sdiam,sdiam)
+	  case "Grey"
+	    c.ForeColor(127,127,127)
+	    c.FillRectangle(x,y,sdiam,sdiam)
+	    c.ForeColor(0,0,0)
+	  else
+	    c.DrawRectangle(x,y,sdiam,sdiam)
+	  end select
+    
+    select case c.OptionValue("FCTemplateBackground")
+    case "Black","Grey"
+      c.ForeColor(255,255,255)
+      c.FillOval(x+slop,y+slop,diam,diam)
+      c.ForeColor(0,0,0)
+    else
+      c.DrawOval(x+slop,y+slop,diam,diam)
+    end select
+  next
+  r.Top=y
+  return r
+end function
+
+//-------------------------------------------------------------------------------------------------
+sub main()
+	dim iobj,i as integer
+	dim objects() as APPlanObject
+	dim fldobj(),fldobs(),fldsess() as string
+	dim tobj,tobs,tsess,tobstemplate,tsesstemplate as TableCollection
+
+	c=new MyPrinterCanvas(true)
+
+	if c.Cancelled then
+	  c.Close(true)
+	  return
+	end if
+
+	// Collect the objects that survive the restrictions
+	for iobj = 1 to nObj
+	  if ObjectSelected(Obj(iObj)) then objects.Append Obj(iObj)
+	next
+
+	if ubound(objects)<0 then
+	  c.Close(true)
+	  print "No objects selected for printing!"
+	  return
+	end if
+	
+	if c.HasOption("SelectedObservationOnly") and c.OptionChecked("SelectedObservationOnly") then
+		if ubound(objects)<>0 then
+			c.Close(true)
+			print "Exactly one object must be selected for the ""Selected observation only"" option!"
+			return
+		end if
+		if Plan(-1).SelectedObservation=nil then
+			c.Close(true)
+			print "An observation must be selected for the ""Selected observation only"" option!"
+			return
+		end if
+	end if
+
+  if c.GetTask="FinderCharts" then
+  	FinderCharts(objects)
+  	return
+  end if
+  
+	// Get object fields
+	fldobj=c.GetFields(1)
+
+	if c.HasOption("AllBlank") and not c.OptionChecked("AllBlank") then
+	  // Reject all fields that are blank in all objects
+	  for i=ubound(fldobj) downto 0
+	    dim found as boolean
+	    found=false
+	    // Sequence # never blank
+	    if fldobj(i)="Sequence #" then continue
+	    for iobj=0 to ubound(objects)
+	      dim s as string
+	      s=objects(iobj).GetValueAsString(fldobj(i))
+	      if s<>"" and s<>"???" then 
+	        found=true
+	        exit
+	      end if
+	    next
+	    if not found then fldobj.Remove i
+	  next
+	end if
+
+	if ubound(fldobj)<0 then
+	  c.Close(true)
+	  print "No object fields specified!"
+	  return
+	end if
+
+	// Create a table for object fields
+	tobj=new TableCollection(fldobj,objects)
+
+	if c.GetTask="Forms" or c.GetTask="Observations" then
+	  // Get observation and session fields
+	  fldsess=c.GetFields(2)
+	  fldobs=c.GetFields(3)
+  
+	  if ubound(fldobs)<0 then
+	    c.Close(true)
+	    print "No observation fields specified!"
+	    return
+	  end if
+  
+	  // Get list of observations and sessions
+	  dim obslist() as APObservation
+	  dim sesslist() as APSession
+	  for iobj=0 to ubound(objects)
+	    dim iobs as Integer, obs as APObservation
+	    // For each associated observation
+	    if c.HasOption("SelectedObservationOnly") and c.OptionChecked("SelectedObservationOnly") then
+	    		obs=Plan(-1).SelectedObservation
+	    		obslist.Append obs
+		      dim sess as APSession
+		      sess=APSession.Session(obs)
+		      if sess<>nil then sesslist.Append sess
+	    else
+		    for iobs=1 to objects(iobj).nObservations
+		      obs=objects(iobj).Observation(iobs)
+		      obslist.Append obs
+		      dim sess as APSession
+		      sess=APSession.Session(obs)
+		      if sess<>nil then sesslist.Append sess
+		    next
+	    end if
+	  next
+
+	  if c.GetTask="Observations" and c.HasOption("AllBlankObs") and not c.OptionChecked("AllBlankObs") then
+	    // Reject all fields that are blank in all observations
+	    for i=ubound(fldobs) downto 0
+	      dim found as boolean, j as integer
+	      found=false
+	      // For each observation
+	      for j=0 to ubound(obslist)
+	        dim s as string
+	        if IsResourceField(fldobs(i)) then
+	          dim k as integer
+	          for k=1 to obslist(j).nResources
+	            s=obslist(j).GetValueAsString(fldobs(i),k)
+	            if s="None" or s="Unknown" or left(s,3)="No " then s=""
+	            if s<>"" and s<>"???" then 
+	              found=true
+	              exit
+	            end if
+	          next
+	          if found then exit
+	        else
+	          s=obslist(j).GetValueAsString(fldobs(i))
+	          if s<>"" and s<>"???" then 
+	            found=true
+	            exit
+	          end if
+	        end if
+	      next
+	      if not found then fldobs.Remove i
+	    next
+    
+	    // Reject all blank fields in associated sessions
+	    for i=ubound(fldsess) downto 0
+	      dim found as boolean, j as integer
+	      found=false
+	      // For each session
+	      for j=0 to ubound(sesslist)
+	        dim s as string
+	        s=sesslist(j).GetValueAsString(fldsess(i))
+	        if s<>"" and s<>"???" then 
+	          found=true
+	          exit
+	        end if
+	      next
+	      if not found then fldsess.Remove i
+	    next
+	  end if
+    
+	  
+    tobs=new TableCollection(fldobs,obslist)
+    if ubound(fldsess)>=0 then
+      tsess=new TableCollection(fldsess,sesslist)
+    end if
+    
+	  if c.GetTask="Forms" then
+	    tobstemplate=new TableCollection(fldobs,"ObsHeadings",true)
+	    tobstemplate.EnlargeDataField("Notes",FormWidthForField("Notes"))
+	    if ubound(fldsess)>=0 then
+	      tsesstemplate=new TableCollection(fldsess,"SessHeadings",false)
+	      tsesstemplate.EnlargeDataField("Notes",FormWidthForField("Notes"))
+	    end if
+	  end if
+	end if
+
+	dim y,hgt,n as integer
+	y=0
+	// Loop for all the objects in the plan
+	for iobj = 0 to ubound(objects)
+		if c.Aborted then exit
+		if iobj=0 then c.ProgressText(objects(iobj).ID)
+	  c.Target(objects(iobj))
+	  
+	  select case c.GetTask
+	  case "Objects", "Forms", "Observations"
+	  	// Do the top of page stuff (headers, etc.)
+	    if y=0 then y=tobj.TopOfPage(y)
+	    tobj.AssignObjectValues(objects(iobj))
+	    
+	    // Compute height of the object field table
+	    hgt=tobj.TableHeight
+	    
+	    // If any images are to be printed, compute the additional height required
+	    if c.OptionChecked("Images") or c.OptionChecked("ConstellationChart") then hgt=hgt+ImagesHeight(c.OptionChecked("Images"),c.OptionChecked("Satellites"),c.OptionChecked("ConstellationChart"))
+	    
+	    // Add extra height for observations and sessions if applicable
+	    if tobs<>nil then hgt=hgt+tobs.TableHeight
+	    if tsess<>nil then hgt=hgt+tsess.TableHeight
+	    	
+	    // If each object prints on a new page, do the pagination
+	    if (iobj>0 and c.OptionChecked("PagePerObject")) or hgt>c.Height-y then
+	      y=0
+	      c.NewPage(objects(iobj).ID)
+	      y=tobj.TopOfPage(y)
+	    end if
+	    if objects(iobj).ID<>"" then c.objIDs.Append objects(iobj).ID
+
+			// Draw the object fields
+	    y=tobj.DrawTable(y)
+	    
+	    // Draw the images if applicable
+	    if c.OptionChecked("Images") or c.OptionChecked("ConstellationChart") then 
+	      DrawImages(y,c.OptionChecked("Images"),c.OptionChecked("Satellites"),c.OptionChecked("ConstellationChart"))
+	      y=y+ImagesHeight(c.OptionChecked("Images"),c.OptionChecked("Satellites"),c.OptionChecked("ConstellationChart"))
+	    end if
+	    
+	    select case c.GetTask
+	    case "Forms"
+	    	// Observation/session templates
+	      n=val(c.OptionValue("nObservations"))
+	      
+	      // Figure out the height
+	      hgt=tobstemplate.TableHeight+c.TextHeight
+	      if tsesstemplate<>nil then hgt=hgt+tsesstemplate.TableHeight
+	      dim dtemplatehgt as integer
+	      dtemplatehgt=0
+	      if c.OptionChecked("DrawingTemplates") then 
+	        dtemplatehgt=c.cmToPixels(CDbl(c.OptionValue("TemplateDiameter")))
+	        hgt=hgt+dtemplatehgt+c.TextHeight
+	      end if
+	      
+	      // Print the observation templates
+	      for i=1 to n
+	        if hgt>c.Height-y then
+	          y=0
+	          c.NewPage(objects(iobj).ID)
+	        else
+	          y=y+c.TextHeight
+	        end if
+	        if tsesstemplate<>nil then 
+	        	y=tsesstemplate.DrawTable(y)
+	        end if
+	        y=tobstemplate.DrawTable(y)
+	        if c.OptionChecked("DrawingTemplates") then 
+	          y=DrawingTemplates(y,dtemplatehgt)
+	        end if
+	      next   
+	    end select
+	    if c.GetTask="Observations" or (c.GetTask="Forms" and c.OptionChecked("PreviousObs")) then
+	      n=objects(iobj).nObservations
+	      if c.GetTask="Forms" then n=min(n,val(c.OptionValue("PreviousObs")))
+	      
+	      for iobs as integer = 1 to n
+	      	if c.Aborted then exit
+	        dim obs as APObservation 
+	        if c.HasOption("SelectedObservationOnly") and c.OptionChecked("SelectedObservationOnly") then
+	        	obs = Plan(-1).SelectedObservation
+	        else
+	        	obs = objects(iobj).Observation(iobs)
+	        end if
+	        tobs.AssignObservationValues(obs)
+	        hgt=tobs.TableHeight
+	        if tsess<>nil then
+	          dim sess as APSession = APSession.Session(obs)
+	          tsess.AssignSessionValues(sess)
+	          hgt=hgt+tsess.TableHeight
+	        end if
+	        if c.OptionChecked("ObsImages") then
+	          hgt=hgt+ObsImageHeight(obs)
+	        end if
+	        if hgt>c.Height-y then
+	          y=0
+	          c.NewPage(objects(iobj).ID)
+	        else
+	          y=y+c.TextHeight
+	        end if
+	        if tsess<>nil then 
+	        	y=tsess.DrawTable(y)
+	        end if
+	        y=tobs.DrawTable(y)
+	        if c.OptionChecked("ObsImages") then y=DrawObsImages(obs,y)
+	        if c.HasOption("SelectedObservationOnly") and c.OptionChecked("SelectedObservationOnly") then exit
+	      next
+	    end if
+	    y=tobj.DrawSeparator(y)
+	  end select
+	next
+
+	tobj.Close
+	if tobs<>nil then tobs.Close
+	if tsess<>nil then tsess.Close
+	if tobstemplate<>nil then tobstemplate.Close
+	if tsesstemplate<>nil then tsesstemplate.Close
+
+	c.Close
+end sub
+
+// Print task definitions
+//+ <root>
+//+     <task name="Objects" caption="Object data">
+//+         <header>
+//+             <item> Object ID/s </item>
+//+             <item checked="true"> Plan file name </item>
+//+             <item> Telescope </item>
+//+             <item> Site </item>
+//+         </header>
+//+         <footer>
+//+             <item> Object ID/s </item>
+//+             <item> Plan file name </item>
+//+             <item> Telescope </item>
+//+             <item> Site </item>
+//+         </footer>
+//+         <restrictions>
+//+             <item group="1" style="bold"> Selected </item>
+//+             <item group="1"> Not Selected </item>
+//+             <item group="2" style="bold"> Highlighted </item>
+//+             <item group="2"> Not Highlighted </item>
+//+             <item group="3" style="bold"> Observed </item>
+//+             <item group="3"> Not Observed </item>
+//+             <item group="4" style="bold"> Visible </item>
+//+             <item group="4"> Not Visible </item>
+//+             <item group="5" style="bold"> Found </item>
+//+             <item group="5"> Not Found </item>
+//+         </restrictions>
+//+         <fields1 caption="Object fields">
+//+             <item> Sequence # </item>
+//+             <item> [object fields] </item>
+//+             <item> ODM Best Eyepiece </item>
+//+             <item> ODM Best Eyepiece + Optical Aid </item>
+//+         </fields1>
+//+         <options>
+//+             <option name="PagePerObject" checkbox="true" caption="New page per object" checked="true"/>
+//+             <option name="AllBlank" checkbox="true" caption="Include all-blank object fields" checked="true"/>
+//+             <option name="Compressed" checkbox="true" caption="Compressed mode" checked="false"> 
+//+                 <value type="Multi" default="3">
+//+                     <multi> Multi-line </multi>
+//+                     <multi> Separator lines </multi>
+//+                 </value>
+//+             </option>
+//+             <option name="StartSequence" checkbox="false" caption="Start Sequence # from"> 
+//+                 <value type="Integer" min="0" max="10000" default="0"/>
+//+             </option>
+//+             <option name="MaxColWidth" checkbox="false" caption="Maximum column width"> 
+//+                 <value type="Integer" min="1" max="100" units="%" default="100"/>
+//+             </option>
+//+             <option name="Grid" checkbox="true" caption="Grid lines" checked="true"/>
+//+             <option name="ObjHeadingsSection" expand="true" caption="Headings">
+//+               <option name="AbbrevHeadings" checkbox="true" caption="Use abbreviated headings" checked="false"/>
+//+               <option name="ObjHeadings" checkbox="false" caption="Heading format">
+//+                 <value type="Multi" default="Bold">
+//+                     <multi> Bold </multi>
+//+                     <multi> Italic </multi>
+//+                     <multi> Underline </multi>
+//+                     <multi> Inverted </multi>
+//+                     <multi> Grey </multi>
+//+                 </value>
+//+               </option>
+//+             </option>
+//+             <option name="ObjMarkIDs" caption="Mark object IDs" expand="true">
+//+               <option name="MarkSelected" checkbox="true" caption="Selected objects"> 
+//+                   <value type="Multi" default="Bold">
+//+                       <multi> Bold </multi>
+//+                       <multi> Italic </multi>
+//+                       <multi> Underline </multi>
+//+                       <multi> Inverted </multi>
+//+                       <multi> Grey </multi>
+//+                   </value>
+//+               </option>
+//+               <option name="MarkHighlighted" checkbox="true" caption="Highlighted objects"> 
+//+                   <value type="Multi" default="Italic">
+//+                       <multi> Bold </multi>
+//+                       <multi> Italic </multi>
+//+                       <multi> Underline </multi>
+//+                       <multi> Inverted </multi>
+//+                       <multi> Grey </multi>
+//+                   </value>
+//+               </option>
+//+             </option>
+//+             <option name="ObjImagesSection" expand="true" caption="Images and Charts"> 
+//+               <option name="Images" checkbox="true" caption="Object images"> 
+//+                   <value type="Multi">
+//+                       <multi init="printGS"> Grey-scale </multi>
+//+                       <multi init="printBoW"> Black-on-white </multi>
+//+                       <multi init="flipEW"> Flip E/W </multi>
+//+                       <multi init="flipNS"> Flip N/S </multi>
+//+                   </value>
+//+               </option>
+//+               <option name="Satellites" checkbox="true" caption="Jupiter/Saturn satellite graphic where applicable" checked="false"/>
+//+               <option name="ConstellationChart" checkbox="true" caption="Constellation chart"> 
+//+                   <value type="Multi">
+//+                       <multi init="printBoW"> Black-on-white </multi>
+//+                   </value>
+//+               </option>
+//+             </option>
+//+         </options>
+//+     </task>
+
+//+     <task name="Observations" caption="Observation data">
+//+         <header>
+//+             <item> Object ID/s </item>
+//+             <item checked="true"> Plan file name </item>
+//+             <item> Telescope </item>
+//+             <item> Site </item>
+//+         </header>
+//+         <footer>
+//+             <item> Object ID/s </item>
+//+             <item> Plan file name </item>
+//+             <item> Telescope </item>
+//+             <item> Site </item>
+//+         </footer>
+//+         <restrictions>
+//+             <item group="1" style="bold"> Selected </item>
+//+             <item group="1"> Not Selected </item>
+//+             <item group="2" style="bold"> Highlighted </item>
+//+             <item group="2"> Not Highlighted </item>
+//+             <item group="3" style="bold" checked="true"> Observed </item>
+//+             <item group="3"> Not Observed </item>
+//+             <item group="4" style="bold"> Visible </item>
+//+             <item group="4"> Not Visible </item>
+//+             <item group="5" style="bold"> Found </item>
+//+             <item group="5"> Not Found </item>
+//+         </restrictions>
+//+         <fields1 caption="Object fields">
+//+             <item> Sequence # </item>
+//+             <item> [object fields] </item>
+//+             <item> ODM Best Eyepiece </item>
+//+             <item> ODM Best Eyepiece + Optical Aid </item>
+//+         </fields1>
+//+         <fields2 caption="Session fields">
+//+             <item> [session fields] </item>
+//+         </fields2>
+//+         <fields3 caption="Observation fields">
+//+             <item> [observation fields] </item>
+//+         </fields3>
+//+         <options>
+//+             <option name="SelectedObservationOnly" checkbox="true" caption="Selected observation only" checked="false"/>
+//+             <option name="PagePerObject" checkbox="true" caption="New page per object" checked="true"/>
+//+             <option name="AllBlank" checkbox="true" caption="Include all-blank object fields" checked="true"/>
+//+             <option name="AllBlankObs" checkbox="true" caption="Include all-blank session/observation fields" checked="true"/>
+//+             <option name="StartSequence" checkbox="false" caption="Start Sequence # from"> 
+//+                 <value type="Integer" min="0" max="10000" default="0"/>
+//+             </option>
+//+             <option name="MaxColWidth" checkbox="false" caption="Maximum column width"> 
+//+                 <value type="Integer" min="1" max="100" units="%" default="100"/>
+//+             </option>
+//+             <option name="Grid" checkbox="true" caption="Grid lines" checked="true"/>
+//+             <option name="ObsHeadingsSection" expand="true" caption="Headings">
+//+               <option name="AbbrevHeadings" checkbox="true" caption="Use abbreviated headings" checked="false"/>
+//+               <option name="ObjHeadings" checkbox="false" caption="Object heading format">
+//+                 <value type="Multi" default="Bold">
+//+                     <multi> Bold </multi>
+//+                     <multi> Italic </multi>
+//+                     <multi> Underline </multi>
+//+                     <multi> Inverted </multi>
+//+                     <multi> Grey </multi>
+//+                 </value>
+//+               </option>
+//+               <option name="SessHeadings" checkbox="false" caption="Session heading format">
+//+                 <value type="Multi" default="Bold+Italic">
+//+                     <multi> Bold </multi>
+//+                     <multi> Italic </multi>
+//+                     <multi> Underline </multi>
+//+                     <multi> Inverted </multi>
+//+                     <multi> Grey </multi>
+//+                 </value>
+//+               </option>
+//+               <option name="ObsHeadings" checkbox="false" caption="Observation heading format">
+//+                 <value type="Multi" default="Bold">
+//+                     <multi> Bold </multi>
+//+                     <multi> Italic </multi>
+//+                     <multi> Underline </multi>
+//+                     <multi> Inverted </multi>
+//+                     <multi> Grey </multi>
+//+                 </value>
+//+               </option>
+//+             </option>
+//+             <option name="ObsMarkIDs" caption="Mark object IDs" expand="true">
+//+               <option name="MarkSelected" checkbox="true" caption="Selected objects"> 
+//+                 <value type="Multi" default="Bold">
+//+                     <multi> Bold </multi>
+//+                     <multi> Italic </multi>
+//+                     <multi> Underline </multi>
+//+                     <multi> Inverted </multi>
+//+                     <multi> Grey </multi>
+//+                 </value>
+//+               </option>
+//+               <option name="MarkHighlighted" checkbox="true" caption="Highlighted objects"> 
+//+                 <value type="Multi" default="Italic">
+//+                     <multi> Bold </multi>
+//+                     <multi> Italic </multi>
+//+                     <multi> Underline </multi>
+//+                     <multi> Inverted </multi>
+//+                     <multi> Grey </multi>
+//+                 </value>
+//+               </option>
+//+             </option>
+//+             <option name="ObsImagesSection" expand="true" caption="Images and Charts"> 
+//+               <option name="Images" checkbox="true" caption="Object images"> 
+//+                 <value type="Multi">
+//+                     <multi init="printGS"> Grey-scale </multi>
+//+                     <multi init="printBoW"> Black-on-white </multi>
+//+                     <multi init="flipEW"> Flip E/W </multi>
+//+                     <multi init="flipNS"> Flip N/S </multi>
+//+                 </value>
+//+               </option>
+//+               <option name="Satellites" checkbox="true" caption="Jupiter/Saturn satellite graphic where applicable" checked="false"/>
+//+               <option name="ConstellationChart" checkbox="true" caption="Constellation chart"> 
+//+                 <value type="Multi">
+//+                     <multi init="printBoW"> Black-on-white </multi>
+//+                 </value>
+//+               </option>
+//+               <option name="ObsImages" checkbox="true" caption="Attached observation images"> 
+//+                 <value type="Multi">
+//+                     <multi> Grey-scale </multi>
+//+                     <multi> Black-on-white </multi>
+//+                 </value>
+//+               </option>
+//+               <option name="ObsImagesPerRow" checkbox="false" caption="Number of attached images per row"> 
+//+                 <value type="Integer" min="1" max="5" default="3" />
+//+               </option>
+//+             </option>
+//+         </options>
+//+     </task>
+
+//+     <task name="Forms" caption="Observing forms">
+//+         <header>
+//+             <item> Object ID/s </item>
+//+             <item checked="true"> Plan file name </item>
+//+             <item> Telescope </item>
+//+             <item> Site </item>
+//+         </header>
+//+         <footer>
+//+             <item> Object ID/s </item>
+//+             <item> Plan file name </item>
+//+             <item> Telescope </item>
+//+             <item> Site </item>
+//+         </footer>
+//+         <restrictions>
+//+             <item group="1" style="bold"> Selected </item>
+//+             <item group="1"> Not Selected </item>
+//+             <item group="2" style="bold"> Highlighted </item>
+//+             <item group="2"> Not Highlighted </item>
+//+             <item group="3" style="bold"> Observed </item>
+//+             <item group="3"> Not Observed </item>
+//+             <item group="4" style="bold"> Visible </item>
+//+             <item group="4"> Not Visible </item>
+//+             <item group="5" style="bold"> Found </item>
+//+             <item group="5"> Not Found </item>
+//+         </restrictions>
+//+         <fields1 caption="Object fields">
+//+             <item> Sequence # </item>
+//+             <item> [object fields] </item>
+//+             <item> ODM Best Eyepiece </item>
+//+             <item> ODM Best Eyepiece + Optical Aid </item>
+//+         </fields1>
+//+         <fields2 caption="Session fields">
+//+             <item> [session fields] </item>
+//+         </fields2>
+//+         <fields3 caption="Observation fields">
+//+             <item> [observation fields] </item>
+//+         </fields3>
+//+         <options>
+//+             <option name="PagePerObject" checkbox="true" caption="New page per object" checked="true"/>
+//+             <option name="AllBlank" checkbox="true" caption="Include all-blank object fields" checked="true"/>
+//+             <option name="StartSequence" checkbox="false" caption="Start Sequence # from"> 
+//+                 <value type="Integer" min="0" max="10000" default="0"/>
+//+             </option>
+//+             <option name="MaxColWidth" checkbox="false" caption="Maximum column width"> 
+//+                 <value type="Integer" min="1" max="100" units="%" default="100"/>
+//+             </option>
+//+             <option name="Grid" checkbox="true" caption="Grid lines" checked="true"/>
+//+             <option name="nObservations" checkbox="false" caption="Observation templates per object"> 
+//+                 <value type="Integer" min="1" max="10" default="1"/>
+//+             </option>
+//+             <option name="FormHeadings" expand="true" caption="Headings">
+//+               <option name="AbbrevHeadings" checkbox="true" caption="Use abbreviated headings" checked="false"/>
+//+               <option name="ObjHeadings" checkbox="false" caption="Object heading format">
+//+                 <value type="Multi" default="Bold">
+//+                     <multi> Bold </multi>
+//+                     <multi> Italic </multi>
+//+                     <multi> Underline </multi>
+//+                     <multi> Inverted </multi>
+//+                     <multi> Grey </multi>
+//+                 </value>
+//+               </option>
+//+               <option name="SessHeadings" checkbox="false" caption="Session heading format">
+//+                 <value type="Multi" default="Bold+Italic">
+//+                     <multi> Bold </multi>
+//+                     <multi> Italic </multi>
+//+                     <multi> Underline </multi>
+//+                     <multi> Inverted </multi>
+//+                     <multi> Grey </multi>
+//+                 </value>
+//+               </option>
+//+               <option name="ObsHeadings" checkbox="false" caption="Observation heading format">
+//+                 <value type="Multi" default="Bold">
+//+                     <multi> Bold </multi>
+//+                     <multi> Italic </multi>
+//+                     <multi> Underline </multi>
+//+                     <multi> Inverted </multi>
+//+                     <multi> Grey </multi>
+//+                 </value>
+//+               </option>
+//+             </option>
+//+             <option name="FormMarkIDs" caption="Mark object IDs" expand="true">
+//+               <option name="MarkSelected" checkbox="true" caption="Selected objects"> 
+//+                 <value type="Multi" default="Bold">
+//+                     <multi> Bold </multi>
+//+                     <multi> Italic </multi>
+//+                     <multi> Underline </multi>
+//+                     <multi> Inverted </multi>
+//+                     <multi> Grey </multi>
+//+                 </value>
+//+               </option>
+//+               <option name="MarkHighlighted" checkbox="true" caption="Highlighted objects"> 
+//+                 <value type="Multi" default="Italic">
+//+                     <multi> Bold </multi>
+//+                     <multi> Italic </multi>
+//+                     <multi> Underline </multi>
+//+                     <multi> Inverted </multi>
+//+                     <multi> Grey </multi>
+//+                 </value>
+//+               </option>
+//+             </option>
+//+             <option name="FormImagesSection" expand="true" caption="Images and Charts"> 
+//+               <option name="Images" checkbox="true" caption="Object images"> 
+//+                 <value type="Multi">
+//+                     <multi init="printGS"> Grey-scale </multi>
+//+                     <multi init="printBoW"> Black-on-white </multi>
+//+                     <multi init="flipEW"> Flip E/W </multi>
+//+                     <multi init="flipNS"> Flip N/S </multi>
+//+                 </value>
+//+               </option>
+//+               <option name="Satellites" checkbox="true" caption="Jupiter/Saturn satellite graphic where applicable" checked="false"/>
+//+               <option name="ConstellationChart" checkbox="true" caption="Constellation chart"> 
+//+                 <value type="Multi">
+//+                     <multi init="printBoW"> Black-on-white </multi>
+//+                 </value>
+//+               </option>
+//+               <option name="ObsImagesPerRow" checkbox="false" caption="Number of attached images per row"> 
+//+                 <value type="Integer" min="1" max="5" default="3" />
+//+               </option>
+//+             </option>
+//+             <option name="DrawingTemplates" expand="true" checkbox="true" caption="Sketching templates"> 
+//+               <option name="TemplateDiameter" caption="Template diameter"> 
+//+                 <value type="Double" min="3" max="20" units="cm" default="5"/>
+//+               </option>
+//+               <option name="TemplateBackground" checkbox="false" caption="Template background"> 
+//+                 <value type="Choice" default="None">
+//+                     <choice> None </choice>
+//+                     <choice> Black </choice>
+//+                     <choice> Grey </choice>
+//+                 </value>
+//+               </option>
+//+             </option>
+//+             <option name="FormPreviousObs" expand="true" caption="Data from previous observations"> 
+//+               <option name="PreviousObs" checkbox="true" caption="Include observation data"> 
+//+                 <value type="Integer" min="1" max="100" units="max" default="5"/>
+//+               </option>
+//+               <option name="ObsImages" checkbox="true" caption="Show attached observation images"> 
+//+                 <value type="Multi">
+//+                     <multi> Grey-scale </multi>
+//+                     <multi> Black-on-white </multi>
+//+                 </value>
+//+               </option>
+//+             </option>
+//+         </options>
+//+     </task>
+
+//+     <task name="FinderCharts" caption="Finder charts">
+//+         <header>
+//+             <item> Object ID/s </item>
+//+             <item checked="true"> Plan file name </item>
+//+             <item> Telescope </item>
+//+             <item> Site </item>
+//+         </header>
+//+         <footer>
+//+             <item> Object ID/s </item>
+//+             <item> Plan file name </item>
+//+             <item> Telescope </item>
+//+             <item> Site </item>
+//+         </footer>
+//+         <restrictions>
+//+             <item group="1" style="bold"> Selected </item>
+//+             <item group="1"> Not Selected </item>
+//+             <item group="2" style="bold"> Highlighted </item>
+//+             <item group="2"> Not Highlighted </item>
+//+             <item group="3" style="bold"> Observed </item>
+//+             <item group="3"> Not Observed </item>
+//+             <item group="4" style="bold"> Visible </item>
+//+             <item group="4"> Not Visible </item>
+//+             <item group="5" style="bold"> Found </item>
+//+             <item group="5"> Not Found </item>
+//+         </restrictions>
+//+         <fields1 caption="Object fields">
+//+             <item> [object fields] </item>
+//+             <item> ODM Best Eyepiece </item>
+//+             <item> ODM Best Eyepiece + Optical Aid </item>
+//+         </fields1>
+//+         <options>
+//+             <option name="Resources" caption="Resources" expand="true">
+//+               <option name="Telescope" caption="Telescope">
+//+                 <value type="resource" source="NonBinoculars" default="0" />
+//+               </option>
+//+               <option name="Finder" caption="Finder scope" expand="true">
+//+                 <option name="UseTelescopeFinder" checkbox="true" radiogroup="finder" caption="Use telescope's finder (where applicable)" checked="false"/>
+//+                 <option name="UseFinderResource" checkbox="true" radiogroup="finder" caption="Use binocular/monocular resource" checked="false">
+//+                   <value type="resource" source="Binoculars" default="0"/>
+//+                 </option>
+//+                 <option name="UseFinderFoV" checkbox="true" radiogroup="finder" caption="Use finder scope FoV" checked="true">
+//+                   <value type="double" min="0.2" max="15.0" default="5.0" units="deg" />
+//+                 </option>
+//+               </option>
+//+               <option name="Eyepiece" caption="Default Eyepiece">
+//+                 <value type="resource" source="Eyepieces" default="0"/>
+//+               </option>
+//+               <option name="Imager" caption="Default Imager">
+//+                 <value type="resource" source="Imagers" default="0"/>
+//+               </option>
+//+               <option name="OpticalAid" checkbox="true" caption="Default Optical Aid">
+//+                 <value type="resource" source="OpticalAids" default="0"/>
+//+               </option>
+//+               <option name="EPChoice" caption="Eyepiece/Optical Aid choice">
+//+                 <option name="EPUseDefaults" checkbox="true" radiogroup="epchoice" caption="Use eyepiece defaults above" checked="true"/>
+//+                 <option name="ImUseDefaults" checkbox="true" radiogroup="epchoice" caption="Use imager defaults above" checked="false"/>
+//+                 <option name="EPODM" checkbox="true" radiogroup="epchoice" caption="Best eyepiece using ODM" checked="false"/>
+//+                 <option name="EPOAODM" checkbox="true" radiogroup="epchoice" caption="Best eyepiece+optical aid using ODM" checked="false"/>
+//+                 <option name="EPFrame" checkbox="true" radiogroup="epchoice" caption="Best eyepiece to frame object size by" checked="false">
+//+                   <value type="double" min="100.0" max="1000.0" default="150.0" units="%" />
+//+                 </option>
+//+                 <option name="EPOAFrame" checkbox="true" radiogroup="epchoice" caption="Best eyepiece+optical aid to frame object size by" checked="false">
+//+                   <value type="double" min="100.0" max="1000.0" default="150.0" units="%" />
+//+                 </option>
+
+//+               </option>
+//+             </option>
+
+//+             <option name="Charts" caption="Charts" expand="true">
+//+               <option name="AllSkyChart" checkbox="true" caption="All-sky chart" checked="true">
+//+                 <option name="AllSkyMainChart" checkbox="true" radiogroup="mainchart" caption="Main chart (if 3 charts are being displayed)" checked="false"/>
+//+               	<option name="AllSkyMagLimit" caption="Magnitude limit">
+//+                   <value type="double" min="2.0" max="6.0" default="4.0" />
+//+               	</option>
+//+                 <option name="AllSkyFlipEW" checkbox="true" caption="Flip E/W orientation" />
+//+                 <option name="AllSkyFlipNS" checkbox="true" caption="Flip N/S orientation" />
+//+                 <option name="SkyOptions" caption="Display Options">
+//+                   <option name="SkyOptConst" checkbox="true" checked="true" caption="Constellation figures"/>
+//+                   <option name="SkyOptAltAzGrid" checkbox="true" checked="false" caption="Alt/Az grid"/>
+//+                   <option name="SkyOptEquGrid" checkbox="true" checked="false" caption="Equatorial grid"/>
+//+                   <option name="SkyOptEcliptic" checkbox="true" checked="false" caption="Ecliptic"/>
+//+                   <option name="SkyOptMWay" checkbox="true" checked="true" caption="Milky Way"/>
+//+                   <option name="SkyOptAlignmentStars" checkbox="true" checked="false" caption="Alignment stars"/>
+//+                   <option name="SkyOptSunMoonPlanets" checkbox="true" checked="true" caption="Sun/Moon/planets"/>
+//+                   <option name="SkyOptObjects" checkbox="true" checked="false" caption="Plan objects">
+//+                     <value type="choice" default="1">
+//+                       <choice> All </choice>
+//+                       <choice> Selected </choice>
+//+                       <choice> Highlighted </choice>
+//+                       <choice> Observed </choice>
+//+                       <choice> Not observed </choice>
+//+                     </value> 
+//+                   </option>
+//+                   <option name="SkyOptSiteHorizon" checkbox="true" checked="false" caption="Site horizon"/>
+//+                 </option>
+//+               </option>
+
+//+               <option name="NakedEyeChart" checkbox="true" caption="Naked-eye chart" checked="true">
+//+                 <option name="NakedEyeMainChart" checkbox="true" radiogroup="mainchart" caption="Main chart (if 3 charts are being displayed)" checked="false"/>
+//+                 <option name="NakedEyeFoV" caption="Field of view">
+//+                   <value type="double" min="10.0" max="60.0" default="60.0" units="deg" />
+//+                 </option>
+//+               	<option name="NakedEyeMagLimit" caption="Magnitude limit">
+//+                   <value type="double" min="2.0" max="8.0" default="4.0" />
+//+               	</option>
+//+                 <option name="NakedEyeFlipEW" checkbox="true" caption="Flip E/W orientation" />
+//+                 <option name="NakedEyeFlipNS" checkbox="true" caption="Flip N/S orientation" />
+//+                 <option name="NakedEyeAltAzRotate" checkbox="true" caption="Orientate for Alt-Az mount" />
+//+                 <option name="NakedEyeLabelDensity" caption="Star label density">
+//+                   <value type="slider" min="0.0" max="100.0" default="45.0" units="%" />
+//+                 </option>
+//+                 <option name="NakedEyeDSOs" checkbox="true" caption="Also show objects from catalogue" checked="false">
+//+                   <value type="popup" source="NonStellar Catalogues" default="Messier Catalogue" />
+//+                   <option name="NakedEyeDSOLabels" checkbox="true" caption="Show object labels" checked="true"/>
+//+                   <option name="NakedEyeDSOMags" checkbox="true" caption="Show object magnitudes" checked="false"/>
+//+                 </option>
+//+                 <option name="NakedEyeDisplayOptions" caption="Display Options">
+//+                   <option name="NakedEyeOptConst" checkbox="true" checked="true" caption="Constellations"/>
+//+                   <option name="NakedEyeOptImages" checkbox="true" checked="false" caption="Images"/>
+//+                   <option name="NakedEyeOptRigel" checkbox="true" checked="false" caption="Rigel QuickFinder reticle"/>
+//+                   <option name="NakedEyeOptTelrad" checkbox="true" checked="false" caption="Telrad reticle"/>
+//+                   <option name="NakedEyeOptScale" checkbox="true" checked="true" caption="Stellar magnitude scale"/>
+//+                   <option name="NakedEyePlanObj" checkbox="true" checked="false" caption="Do not show other plan objects"/>
+//+                   <option name="NakedEyeSolarSystem" caption="Solar System Objects">
+//+                     <option name="NakedEyeSSSun" checkbox="true" checked="false" caption="Show Sun"/>
+//+                     <option name="NakedEyeSSMoon" checkbox="true" checked="true" caption="Show Moon"/>
+//+                     <option name="NakedEyeSSPlanets" checkbox="true" checked="true" caption="Show Planets"/>
+//+                     <option name="NakedEyeSSComets" checkbox="true" checked="true" caption="Show Comets"/>
+//+                     <option name="NakedEyeSSMinorPlanets" checkbox="true" checked="true" caption="Show Minor Planets"/>
+//+                   </option>
+//+                 </option>
+//+               </option>
+
+//+               <option name="FinderChart" checkbox="true" caption="Finder scope chart" checked="true">
+//+                 <option name="FinderMainChart" checkbox="true" radiogroup="mainchart" caption="Main chart (if 3 charts are being displayed)" checked="false"/>
+//+                 <option name="FinderMagLimit" caption="Magnitude limit">
+//+                   <option name="FinderMagLimitCompute" checkbox="true" radiogroup="findermaglimit" caption="Compute for aperture" checked="false">
+//+                     <value type="double" min="10.0" max="150.0" default="50.0" units="mm" />
+//+              	   </option>
+//+                   <option name="FinderMagLimitSet" checkbox="true" radiogroup="findermaglimit" caption="Specify" checked="true">
+//+                     <value type="double" min="2.0" max="12.0" default="8.0" />
+//+              	   </option>
+//+              	 </option>
+//+                 <option name="FinderStellarCatalogue" caption="Stellar catalogue">
+//+                   <value type="popup" source="Stellar Catalogues" default="ASCC Lite Catalogue" />
+//+                 </option>
+//+                 <option name="FinderFlipEW" checkbox="true" caption="Flip E/W orientation" />
+//+                 <option name="FinderFlipNS" checkbox="true" caption="Flip N/S orientation" />
+//+                 <option name="FinderAltAzRotate" checkbox="true" caption="Orientate for Alt-Az mount" />
+//+                 <option name="FinderLabelDensity" caption="Star label density">
+//+                   <value type="slider" min="0.0" max="100.0" default="50.0" units="%" />
+//+                 </option>
+//+                 <option name="FinderZoomFactor" caption="Zoom factor">
+//+                   <value type="slider" min="100.0" max="400.0" default="100.0" units="%" />
+//+                 </option>
+//+                 <option name="FinderDSOs" checkbox="true" caption="Also show objects from catalogue" checked="false">
+//+                   <value type="popup" source="NonStellar Catalogues" default="Messier Catalogue" />
+//+                   <option name="FinderDSOLabels" checkbox="true" caption="Show object labels" checked="true"/>
+//+                   <option name="FinderDSOMags" checkbox="true" caption="Show object magnitudes" checked="false"/>
+//+                 </option>
+//+                 <option name="FinderDisplayOptions" caption="Display Options">
+//+                   <option name="FinderOptConst" checkbox="true" checked="false" caption="Constellations"/>
+//+                   <option name="FinderOptImages" checkbox="true" checked="false" caption="Images"/>
+//+                   <option name="FinderOptRigel" checkbox="true" checked="false" caption="Rigel QuickFinder reticle"/>
+//+                   <option name="FinderOptTelrad" checkbox="true" checked="false" caption="Telrad reticle"/>
+//+                   <option name="FinderOptScale" checkbox="true" checked="true" caption="Stellar magnitude scale"/>
+//+                   <option name="FinderOptAperture" checkbox="true" checked="true" caption="Show aperture"/>
+//+                   <option name="FinderPlanObj" checkbox="true" checked="false" caption="Do not show other plan objects"/>
+//+                   <option name="FinderSolarSystem" caption="Solar System Objects">
+//+                     <option name="FinderSSSun" checkbox="true" checked="false" caption="Show Sun"/>
+//+                     <option name="FinderSSMoon" checkbox="true" checked="false" caption="Show Moon"/>
+//+                     <option name="FinderSSPlanets" checkbox="true" checked="false" caption="Show Planets"/>
+//+                     <option name="FinderSSComets" checkbox="true" checked="true" caption="Show Comets"/>
+//+                     <option name="FinderSSMinorPlanets" checkbox="true" checked="true" caption="Show Minor Planets"/>
+//+                   </option>
+//+                 </option>
+//+               </option>
+
+//+               <option name="EyepieceChart" checkbox="true" caption="Eyepiece/Imager chart" checked="true">
+//+                 <option name="EyepieceMainChart" checkbox="true" radiogroup="mainchart" caption="Main chart (if 3 charts are being displayed)" checked="false"/>
+//+               	<option name="EyepieceMagLimit" caption="Magnitude limit">
+//+                   <option name="EyepieceMagLimitCompute" checkbox="true" radiogroup="epmaglimit" caption="For telescope" checked="true"/>
+//+                   <option name="EyepieceMagLimitSet" checkbox="true" radiogroup="epmaglimit" caption="Specify" checked="false">
+//+                     <value type="double" min="5.0" max="19.0" default="12.0" />
+//+               	  </option>
+//+               	</option>
+//+                 <option name="EyepieceStellarCatalogue" caption="Stellar catalogue">
+//+                   <value type="popup" source="Stellar Catalogues" default="All-Sky Compiled Catalogue" />
+//+                 </option>
+//+                 <option name="EyepieceFlipEW" checkbox="true" caption="Flip E/W orientation" />
+//+                 <option name="EyepieceFlipNS" checkbox="true" caption="Flip N/S orientation" />
+//+                 <option name="EyepieceAltAzRotate" checkbox="true" caption="Orientate for Alt-Az mount" />
+//+                 <option name="EyepieceLabelDensity" caption="Star label density">
+//+                   <value type="slider" min="0.0" max="100.0" default="50.0" units="%" />
+//+                 </option>
+//+                 <option name="EyepieceZoomFactor" caption="Zoom factor">
+//+                   <value type="slider" min="100.0" max="400.0" default="100.0" units="%" />
+//+                 </option>
+//+                 <option name="EyepieceDSOs" checkbox="true" caption="Also show objects from catalogue" checked="false">
+//+                   <value type="popup" source="NonStellar Catalogues" default="Messier Catalogue" />
+//+                   <option name="EyepieceDSOLabels" checkbox="true" caption="Show object labels" checked="true"/>
+//+                   <option name="EyepieceDSOMags" checkbox="true" caption="Show object magnitudes" checked="false"/>
+//+                 </option>
+//+                 <option name="EyepieceDisplayOptions" caption="Display Options">
+//+                   <option name="EyepieceOptImages" checkbox="true" checked="false" caption="Images"/>
+//+                   <option name="EyepieceImagerSensor" checkbox="true" checked="true" caption="Show imager main sensor"/>
+//+                   <option name="EyepieceGuiderSensor" checkbox="true" checked="true" caption="Show imager guide sensor"/>
+//+                   <option name="EyepieceGuiderTrack" checkbox="true" checked="true" caption="Show imager guide sensor track"/>
+//+                   <option name="EyepieceOptScale" checkbox="true" checked="true" caption="Stellar magnitude scale"/>
+//+                   <option name="EyepieceOptAperture" checkbox="true" checked="true" caption="Show aperture"/>
+//+                   <option name="EyepieceOptMagnitude" checkbox="true" checked="false" caption="Show magnitude labels"/>
+//+                   <option name="EyepieceOptSep" checkbox="true" checked="false" caption="Show separation labels"/>
+//+                   <option name="EyepieceOptPosAngle" checkbox="true" checked="false" caption="Show position angle labels"/>
+//+                   <option name="EyepiecePlanObj" checkbox="true" checked="false" caption="Do not show other plan objects"/>
+//+                   <option name="EyepieceSolarSystem" caption="Solar System Objects">
+//+                     <option name="EyepieceSSSun" checkbox="true" checked="false" caption="Show Sun"/>
+//+                     <option name="EyepieceSSMoon" checkbox="true" checked="true" caption="Show Moon"/>
+//+                     <option name="EyepieceSSPlanets" checkbox="true" checked="true" caption="Show Planets"/>
+//+                     <option name="EyepieceSSComets" checkbox="true" checked="true" caption="Show Comets"/>
+//+                     <option name="EyepieceSSMinorPlanets" checkbox="true" checked="true" caption="Show Minor Planets"/>
+//+                   </option>
+//+                 </option>
+//+               </option>
+//+             </option>
+
+//+             <option name="Images" caption="Images and Charts" expand="true">
+//+               <option name="FCImages" checkbox="true" caption="Show DSS images"> 
+//+                 <value type="Multi">
+//+                     <multi init="printGS"> Grey-scale </multi>
+//+                     <multi init="printBoW"> Black-on-white </multi>
+//+                     <multi init="flipEW"> Flip E/W </multi>
+//+                     <multi init="flipNS"> Flip N/S </multi>
+//+                 </value>
+//+               </option>
+//+               <option name="FCSatellites" checkbox="true" caption="Show Jupiter/Saturn satellite graphic where applicable" checked="false"/>
+//+               <option name="FCConstellationChart" checkbox="true" caption="Show constellation chart"> 
+//+                 <value type="Multi">
+//+                     <multi init="printBoW"> Black-on-white </multi>
+//+                 </value>
+//+               </option>
+//+               <option name="FCImagesPerRow" checkbox="false" caption="Number of images per row"> 
+//+                 <value type="Integer" min="1" max="5" default="3" />
+//+               </option>
+//+             </option>
+
+//+             <option name="ShowObjectInfo" checkbox="true" caption="Display object field information" checked="false"/>
+//+             <option name="FCTemplates" checkbox="true" caption="Sketching templates. Diameter:"> 
+//+                 <value type="Double" min="3" max="20" units="cm" default="5"/>
+//+                 <option name="FCTemplateBackground" checkbox="false" caption="Sketching template background"> 
+//+                   <value type="Choice" default="None">
+//+                     <choice> None </choice>
+//+                     <choice> Black </choice>
+//+                     <choice> Grey </choice>
+//+                   </value>
+//+                 </option>
+//+                 <option name="nFCTemplates" caption="Maximum number of templates">
+//+                   <value type="Integer" min="1" max="10" default="3" />
+//+                 </option>
+//+             </option>
+
+//+             <option name="Printing" caption="Printing Options">
+//+               <option name="BoWStars" checkbox="true" caption="Black stars on white background" checked="true" />
+//+               <option name="ObjectNewPage" checkbox="true" caption="Images and Object Info on new page" checked="false" />
+//+               <option name="LimitPrintWidth" checkbox="true" caption="Limit print area width to" checked="false">
+//+                 <value type="double" min="5.0" max="100.0" default="15.0" units="cm" />
+//+               </option>
+//+               <option name="LimitPrintHeight" checkbox="true" caption="Limit print area height to" checked="false">
+//+                 <value type="double" min="5.0" max="100.0" default="10.0" units="cm" />
+//+               </option>
+//+             </option>
+//+         </options>
+//+     </task>
+
+//+ </root>

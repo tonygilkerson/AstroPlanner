@@ -1,0 +1,18 @@
+APSF,V1,0,,-1,0,
+// List objects that rise after 6pm
+//= Rise after 6pm
+
+sub main()
+	dim list as new ListWindow("Rise after 18:00")
+	list.Heading(1) = "ID"
+	list.Heading(2,2) = "Rise Time"
+	dim row as integer = 1
+	for i as integer = 1 to Plan().nObjects
+		dim ob as APPlanObject = Plan().Obj(i)
+		if ob.Rise>18.0 then
+			list.Cell(row,1) = ob.ID
+			list.Cell(row,2,"TimeOfDay") = ob.Rise
+			row=row+1
+		end if
+	next
+end sub

@@ -1,0 +1,27 @@
+APSF,V1,0,,-1,0,
+//- Search a catalogue for all stars of a given spectral class and brighter than a given magnitude limit
+
+sub main()
+	const spectralClass = "G2V"
+	const magLimit = 6.0
+	
+	// Choose a catalogue
+	dim clist() as APCatalog = APCatalog.Choose(false,APSearch.type_Star)
+	
+	// Return if no catalogue was selected
+	if clist.UBound<0 then return
+		
+		dim c as APCatalog = clist(0)
+		
+	// Scan catalogue objects looking for stars with spectrum starting with spectralClass and Mag <= magLimit
+	Dialog.StartProgress("Processing catalogue",true,c.nObjects)
+	for i as integer = 1 to c.nObjects
+		if Dialog.UpdateProgress(i) then exit
+		dim cob as APCatalogObject = c.GetObject(i)
+		if cob.Spectral.StartsWith(spectralClass) and cob.Magnitude<=magLimit then
+			// Add the object to the current plan
+			call cob.AddToPlan
+		end if
+	next
+	Dialog.StopProgress
+end sub

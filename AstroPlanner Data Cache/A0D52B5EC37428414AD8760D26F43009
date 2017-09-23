@@ -1,0 +1,72 @@
+APSF,V1,0,,-1,0,
+// Create Orchestrate script
+//= Orchestrate
+
+sub main()	
+	// Restore saved parameters from plan document, defaulting the first time
+	
+	dim DelayAfterSlew as integer = Plan().RestoreValue("DelayAfterSlew",30)
+	dim ExposureTime as integer = Plan().RestoreValue("ExposureTime",30)
+	dim DelayAfterExposure as integer = Plan().RestoreValue("DelayAfterExposure",60)
+	dim DoVisible as boolean = Plan().RestoreValue("DoVisible",false)
+	dim UseName as boolean = Plan().RestoreValue("UseName",false)
+	
+	// Edit parameter values, if necessary
+	
+	dim dlg as new Dialog
+	dlg.IntegerParameter("Delay after slew",DelayAfterSlew)
+	dlg.IntegerParameter("Exposure time",ExposureTime)
+	dlg.IntegerParameter("Delay after exposure",DelayAfterExposure)
+	dlg.BooleanParameter("Visible objects ONLY",DoVisible)
+	dlg.BooleanParameter("Use Name field",UseName)
+	
+	if not dlg.Show("Create Orchestrate") then return
+	
+	DelayAfterSlew = dlg.IntegerParameter("Delay after slew")
+	ExposureTime = dlg.IntegerParameter("Exposure time")
+	DelayAfterExposure = dlg.IntegerParameter("Delay after exposure")
+	DoVisible = dlg.BooleanParameter("Visible objects ONLY")
+	UseName = dlg.BooleanParameter("Use Name field")
+	
+	// Open an output file
+	
+	dim f as APTextFile = APTextFile.WriteFile("Orchestrate.txt")
+	if f=nil then return
+	
+	// Loop through objects
+	
+	for i as integer = 1 to Plan().nObjects
+		dim ob as APPlanObject = Plan().Obj(i)
+		if not DoVisible or ob.Visible = "Yes" then
+			dim id as string
+			if UseName then
+				id = ob.Name
+			else
+				id = ob.ID
+			end if
+			dim ra as double = ob.RA
+			dim dec as double = ob.Dec
+			
+			// Convert to current epoch
+			CurrentEpochFrom2000(ra,dec)
+			
+			f.WriteLine "SlewToRaDec, "+format(ra,"0.000000")+"h"+format(dec,"-0.000000")+"d, Slew to "+id
+			if DelayAfterSlew > 0 then
+				f.WriteLine "WaitFor, "+str(DelayAfterSlew)+", Delay for "+str(DelayAfterSlew)+" seconds"
+			end if
+			f.WriteLine "TakeImage, "+str(ExposureTime)+", Expose for "+str(ExposureTime)+" seconds"
+			if DelayAfterExposure > 0 then
+				f.WriteLine "WaitFor, "+str(DelayAfterExposure)+", Delay for "+str(DelayAfterExposure)+" seconds"
+			end if
+		end if
+	next
+	f.Close
+	
+	// Save non-volatile parameters to plan document
+	
+	Plan().SaveValue("DelayAfterSlew",DelayAfterSlew)
+	Plan().SaveValue("ExposureTime",ExposureTime)
+	Plan().SaveValue("DelayAfterExposure",DelayAfterExposure)
+	Plan().SaveValue("DoVisible",DoVisible)
+	Plan().SaveValue("UseName",UseName)
+end sub

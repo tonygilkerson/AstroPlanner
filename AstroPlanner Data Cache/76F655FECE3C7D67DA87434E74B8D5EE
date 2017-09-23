@@ -1,0 +1,49 @@
+APSF,V1,0,,-1,0,
+// Find the brightest G (spectrum) star within 2 degrees of selected object
+//= Find G star
+
+sub main()	
+	const radius = 2  // Search radius
+
+	// Make sure an object is selected
+	dim selected as APPlanObject = Plan().SelectedObject
+	if selected=nil then
+	  Print "No object selected in the plan!"
+	  return
+	end if
+ 
+	dim s as new APSearch
+
+	// Search for objects whose spectrum starts with "G"
+	s.AddBound(APSearch.item_Spectral,APSearch.rel_StartsWith,"G")
+
+	// Restrict to stellar objects
+	s.AddType(APSearch.type_Star)
+	s.AddType(APSearch.type_Double)
+	s.AddType(APSearch.type_Triple)
+	s.AddType(APSearch.type_Multiple)
+
+	// Specify particular catalogue to search here, if necessary
+	//s.SetCatalog("Sky 2000")
+
+	// Restrict to given radius
+	s.WithinDistance(radius,selected.RA,selected.Dec)
+
+	// Find the minimum magnitude (i.e. brightest)
+	s.FindMinimum(APSearch.item_Magnitude)
+
+	if s.Search then
+	  if s.nObjects<1 then
+	    Print "No star found"
+	  else
+	    Bleep
+	    print s.GetObject(1).ID+", Mag:"+str(s.GetObject(1).Magnitude)+ _
+	    ", RA:"+FormatRA(s.GetObject(1).RA)+", Dec:"+FormatDec(s.GetObject(1).Dec)+ _
+	    ", Spectrum:"+s.GetObject(1).Spectral+", Distance:"+ _
+	    str(AngleBetween(s.GetObject(1).RA,s.GetObject(1).Dec, _
+	    selected.RA,selected.Dec))+DegreeSymbol
+	  end if
+	else
+	  print "Error: "+s.Error
+	end if
+end sub

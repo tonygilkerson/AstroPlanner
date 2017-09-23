@@ -1,0 +1,21 @@
+APSF,V1,0,,-1,0,
+//- Find all comets brighter than magnitude 13.5 in COMET.DAT and add to the plan
+
+sub main()
+	const magLimit = 13.5
+	
+	// Get the current plan's Julian date
+	dim jd as double = Plan().JulianDate
+	
+	// Loop through all objects in the COMET.DAT database
+	dim n as integer = 0
+	for i as integer = 1 to APCometObject.Count
+		dim ob as APCometObject = APCometObject.Get(i)
+		if ob.Magnitude(jd)<=magLimit then
+			// Magnitude brighter than magLimit, add to the plan
+			call ob.AddToPlan
+			n = n + 1
+		end if
+	next
+	Print str(n)+" comets added to "+Plan().Name
+end sub

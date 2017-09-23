@@ -1,0 +1,88 @@
+APSF,V1,0,,-1,0,
+// Convert catalogue to Starry Night data file
+//= Starry Night export
+
+sub main()
+
+  dim dlg as new Dialog
+	dlg.PopupParameter("Catalogue",0,APCatalog.Catalogs)
+	dlg.StringParameter("Restrict to Type","")
+	dlg.CaptionParameter("(leave blank for all types)",1,true,false,false,true)
+	dlg.IntegerParameter("Maximum objects to convert",0,0)
+	dlg.CaptionParameter("(Use 0 for all objects)",1,true,false,false,true)
+
+	if not dlg.Show("Starry Night Export") then return
+
+	dim cat as APCatalog = APCatalog.Catalog(dlg.PopupParameter("Catalogue")+1)
+	dim restrictToType as string = dlg.StringParameter("Restrict to Type")
+	dim maxObjects as integer = dlg.IntegerParameter("Maximum objects to convert")
+
+	if cat=nil then 
+	  Print "Could not find catalogue"
+	  return
+	end if
+
+	dim IDCode as string = cat.GetObject(1).ID
+	if not IsNumeric(IDCode.right(1)) then
+	  Print "Primary ID must be numeric"
+	  return
+	end if
+	while IDCode<>"" and IsNumeric(IDCode.right(1))
+	  IDCode=IDCode.Chop(1)
+	wend
+
+	// Set up output file
+	dim fout as APTextFile = APTextFile.WriteFile
+	if fout=nil then return
+
+	// Write preamble
+	fout.WriteLine "HEADER"+chr(9)+"DataName"+chr(9)+cat.FileName
+	fout.WriteLine "HEADER"+chr(9)+"Description"+chr(9)+cat.Name
+	fout.WriteLine "HEADER"+chr(9)+"NumberOfObjects"+chr(9)+format(cat.nObjects,"0")
+	fout.WriteLine "HEADER"+chr(9)+"UnknownMagnitude"+chr(9)+"10.0"
+	fout.WriteLine "HEADER"+chr(9)+"DrawDepth"+chr(9)+"8000"
+	fout.WriteLine "HEADER"+chr(9)+"CataloguePreamble"+chr(9)+"1"+chr(9)+IDCode
+	dim types() as string = cat.GetTypes
+	for i as integer = 0 to ubound(types)
+	  fout.WriteLine "HEADER"+chr(9)+"KindName"+chr(9)+str(i)+chr(9)+types(i)
+	next
+
+	// Cycle through all objects in the catalogue
+	dim nOb as integer = 0
+	dim lastCatNumber as string
+	for iobj as integer = 1 to cat.nObjects
+	  dim ob as APCatalogObject = cat.GetObject(iobj)
+	  dim doThis as boolean = true
+	  // Check for type restriction
+	  if restrictToType<>"" and instr(ob.Type,restrictToType)<=0 then doThis=false
+	  if doThis then    
+	    dim catNumber as string = mid(ob.ID,len(IDCode)+1)
+    
+	    if catNumber<>LastCatNumber then  // Ignore duplicates
+	    	dim s(6) as string
+	      s(0) = catNumber   // Catalogue number
+	      s(1)="1" // Catalogue kind
+	      if ob.Magnitude>=30.0 then
+	        s(2)=""  // No Magnitude
+	      else
+	        s(2)=str(ob.Magnitude)  // Magnitude
+	      end if
+	      dim obtypes() as string = ob.GetTypes
+	      s(3)=str(types.IndexOf(obtypes(0)))  // Kind
+	      s(4)=format(ob.RA*15.0,"-0.000000")  // RA (in degrees)
+	      s(5)=format(ob.Dec,"-0.000000")  // Dec (in degrees)
+	      s(6)=left(ob.Name,30)  // Name
+
+	      fout.WriteLine(Join(s,chr(9)))
+	      nOb=nOb+1
+      
+	      // See if maximum number of required objects has been exceeded
+	      if maxObjects>0 and nOb>=maxObjects then exit
+	    end if
+	    lastCatNumber=catNumber
+	  end if
+	next
+
+	fout.Close
+	Bleep
+end sub

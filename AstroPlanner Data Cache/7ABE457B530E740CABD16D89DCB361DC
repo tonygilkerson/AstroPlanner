@@ -1,0 +1,48 @@
+APSF,V1,0,,-1,0,
+//- Slew to each visible object in the plan.
+//- After slewing, wait 60 seconds before slewing again.
+
+sub main()
+	const delayAfterSlew = 60.0
+	
+	// Check that the telescope is connected
+	if not Plan().TelescopeConnected then
+		Print "Connect to a go-to telescope before running this script!"
+		return
+	end if
+	
+	// Deselect all objects in the list
+	Plan().SelectObject(nil)
+	
+	// Select objects to slew to
+	for i as integer = 1 to Plan().nObjects
+		dim ob as APPlanObject = Plan().Obj(i)
+		if ob.IsVisible then
+			// Object is visible. Select it in the object list
+			ob.Selected = true
+			dim result as integer = ob.SlewTo
+			
+			select case result
+			case -1 // telescope is not connected or does not have go-to slewing capabilities.
+				Print "Telescope isn't a go-to scope, or is not connected!"
+				return
+				
+			case 0 // slew successful.
+				// Wait for slew to complete
+				select case Plan().SlewWait
+				case 0,-1 // slew successfully completed, or routine timed-out.
+					// Wait for 60 seconds
+					if not DelayCancellable(delayAfterSlew,"Observing "+ob.ID+" for "+str(delayAfterSlew)+" seconds") then return
+				
+				case -2 // user aborted slew (by clicking the Cancel button).
+					return  // Cancels entire script
+				end select
+				
+			case 2 // below horizon (altitude < 0°)
+			case 3 // outside slewing limits (see the mount settings for the telescope).
+			case 4 // Blocked by user-defined horizon.
+			end select
+		end if
+		ob.Selected = false
+	next
+end sub

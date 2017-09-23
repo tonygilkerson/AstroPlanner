@@ -1,0 +1,26 @@
+APSF,V1,0,,-1,0,
+//- Create a new plan containing all the unobserved objects from the current plan
+
+sub main()
+	// Create an array of unobserved objects
+	
+	dim unobserved() as APPlanObject
+	for i as integer = 1 to Plan().nObjects
+		dim ob as APPlanObject = Plan().Obj(i)
+		if ob.nObservations<=0 then unobserved.Append ob
+	next
+	
+	// Abort if no unobserved objects
+	if unobserved.UBound<0 then
+		Print "No unobserved objects in the current plan!"
+		return
+	end if
+	
+	// Create a new untitled plan document
+	dim newPlan as APPlan = APPlan.NewUntitled
+	
+	// Transfer the unobserved objects to the new plan document
+	for i as integer = 0 to unobserved.Ubound
+		call newPlan.NewObject(unobserved(i))
+	next
+end sub
