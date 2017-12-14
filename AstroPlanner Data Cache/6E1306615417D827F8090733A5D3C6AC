@@ -1,11 +1,0 @@
-0	Equatorial grid	Lines1	Alt-Azimuth grid	Lines2	Ecliptic	Lines3	Galactic equator	Lines4	NELM for star visibility	Visibility5	Alignment stars	Objects	All|Selected only6	Sun/Moon/Planets	Objects7	Site Horizon	Visibility8	Limits	Visibility9	Milky Way outline	Lines10	Figures	Constellations11	Borders	Constellations12	Field of view (FoV)	Objects13	Telescope RA/Dec	Lines
-14	Fixed Altitude	Lines
-15	Objects	Plan Objects	All|Not selected|Highlighted|Not highlighted|Observed|Not observed16	Object sequence	Plan Objects17	Stars	Objects18	Contours	Visibility	NELM|SB (nL)|SB (mag/sq.arcsec)19	Meteor shower radiants	Objects20	Bolide shower radiants	Objects21	Flip East/West	Orientation22	Flip North/South	Orientation23	Catalogue objects	Objects24	Names	Constellations25	Number of observations	Plan Objects26	Show ID	Plan Objects27	Show Name	Plan Objects28	Fixed Horizon	Visibility29	Light dome	Visibility30	Twilight/daylight colours	Visibility31	Air Mass	Lines
-32	Meridian	Lines
-33	Rotate Chart	Orientation
-34	Selected object/s	Plan Objects
-35
-36
-37
-38
-39

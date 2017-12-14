@@ -1,1268 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<root xmlns:xml="http://www.w3.org/XML/1998/namespace">
-  <release>
-    <version>2.3a13</version>
-    <note></note>
-    <releasedate>Sunday, August 6, 2017</releasedate>
-    <issue>
-      <id>6129</id>
-      <status>Fixed</status>
-      <resolutiondate>8/6/2017</resolutiondate>
-      <platform>All</platform>
-      <title>Program will not shut down.</title>
-      <description>After opening a the program with a document  I tried to close  the program. It brings up a window "Closing Documet" and freezes.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6136</id>
-      <status>Fixed</status>
-      <resolutiondate>8/6/2017</resolutiondate>
-      <platform>Windows</platform>
-      <title>ERROR on EXIT</title>
-      <description>AP program will not close down after use, when closing down error box pops up if click on cancelled AP just locks up not closing. On my Windows PC you have to do Ctrl Alt Delete and force Shutdown. sometimes it will run ok and close if you are just reading info, it seems to be when you do any major tasks ?</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6137</id>
-      <status>Fixed</status>
-      <resolutiondate>8/6/2017</resolutiondate>
-      <platform>Windows</platform>
-      <title>Tried V2.3a12 but when exiting the app it crashes and Microsoft error window appears</title>
-      <description>I have tried installing V2.3a12 which launches correctly but announces that the plan I am using is incompatible with this version. The plans were created using version V2.2.anyway I have continue and the program functions correctly. It has corrected the bug where the stars near the pole didnt appear in the FOV. Anyway when I close the application it crashes to the desktop and I get the Microsoft error message which tries to find a solution on line. The application is loaded on to windows 7 SP1 Home premium laptops which are synchronised using a usb stick. When it crashes there is no synchronising or the challenge to save my work. All seems to work when I revert to V2.2 except the FOV does not display the stars near polaris.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6134</id>
-      <status>Implemented</status>
-      <resolutiondate>8/1/2017</resolutiondate>
-      <platform>All</platform>
-      <title>Add "Sun" data to overview</title>
-      <description>Currently Moon data is part of the overview at top in the Objects tab, screenshot attached. It would be nice to have Sun data, too, as it is useful when planning dusk/dawn timelapse sequences.</description>
-      <analysis>After discussion, adding Azimuth to Sun and Moon widgets would suffice.</analysis>
-      <resolution>Implemented. Added azimuth to sun and moon info widgets.</resolution>
-    </issue>
-    <issue>
-      <id>6126</id>
-      <status>Fixed</status>
-      <resolutiondate>7/30/2017</resolutiondate>
-      <platform>All</platform>
-      <title>JPL minor planet and comet downloads no longer work</title>
-      <description>JPL minor planet and comet downloads no longer work.</description>
-      <analysis>NASA in its infinite wisdom has changed access to this data from HTTP to HTTPS. Unfortunately, AP V2.2 can only handle HTTP downloads.</analysis>
-      <resolution>Fixed. HTTPS downloads now possible.</resolution>
-    </issue>
-    <nbugs>4</nbugs>
-    <nenhancements>1</nenhancements>
-  </release>
-  <release>
-    <version>2.3a12</version>
-    <note></note>
-    <releasedate>Saturday, July 22, 2017</releasedate>
-    <issue>
-      <id>6047</id>
-      <status>Fixed</status>
-      <resolutiondate>7/22/2017</resolutiondate>
-      <platform>All</platform>
-      <title>TelescopeMount.!MountCreate: Out Of Bounds Exception</title>
-      <description>Exception Type: Out Of Bounds Exception1: Function TelescopeMount.!MountCreate( string, int32 ) as TelescopeMount2: Function TelescopeMount.!GetMount( string, int32 ) as TelescopeMount3: Function ASCOMMount.AlignmentStarMask() as int324: Function MainWindow.GetAlignmentStars( MainWindow ) as AlignmentStars5: Sub MainWindow.Event_EnableMenuItems( MainWindow )6: Sub MainWindow.TabsChange( MainWindow )7: Sub MainWindow.Tabs_Change( MainWindow, TabPanel )8: Sub Delegate.IM_Invoke( TabPanel )9: Sub AddHandler.Stub.15()10: Sub Delegate.Invoke()11: Sub Application._CallFunctionWithExceptionHandling()User description of above error trace:New APBeta2.3a9 will not run after updating from Beta2.3a7 when tried to run I get the splash screen then the main screen shows up for about 1 second then closes ? if I run Windows task manager AP shows to start then close down, I tried to change telescope setting from AP2.2 ran from different location but no change. As Beta2.3a8 gives me errors I will do as before continue using Beta2.3a7 as that runs well with no problems. I would be happy if there was a activation app to remove the date expiry date nag screen. I have no complants about the software but I think you are tring to hard please everone what ever Computer they have. not sure what my error problem is it just states (Exception Type: Out Of Bounds Exception) Beta2.3a7 is the best version I have used for a lon time, it loads data faster than others ? My PC is an old Gigabyte P35 MB running Windows 10 home but most other things run with little problems. Thanks. </description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6070</id>
-      <status>Fixed</status>
-      <resolutiondate>7/22/2017</resolutiondate>
-      <platform>All</platform>
-      <title>TelescopeMount.!MountCreate: Out Of Bounds Exception</title>
-      <description>Exception Type: Out Of Bounds Exception1: Function TelescopeMount.!MountCreate( string, int32 ) as TelescopeMount2: Function TelescopeMount.!GetMount( string, int32 ) as TelescopeMount3: Function ASCOMMount.AlignmentStarMask() as int324: Function MainWindow.GetAlignmentStars( MainWindow ) as AlignmentStars5: Sub MainWindow.Event_EnableMenuItems( MainWindow )6: Sub Delegate.Invoke()7: Sub Application._CallFunctionWithExceptionHandling()User description of above error trace:Paul,I have gotten around the startup problem with V2.3a10 and Win x64.  If I delete the prefs file 2.3a10 will startup.  However when I try to open a plan I get the Out of Bounds error that I am reporting.  I cannot attach the Error Log as the Attach option is greyed out.I am including the contents of the Error Log copied as follows:Version: 2.3a10Expires: 6/24/2017Date: 2/25/2017  7:14:34 PMOS: Win8/10-64Exception Type: Out Of Bounds Exception1: Function TelescopeMount.!MountCreate( string, int32 ) as TelescopeMount2: Function TelescopeMount.!GetMount( string, int32 ) as TelescopeMount3: Function ASCOMMount.AlignmentStarMask() as int324: Function MainWindow.GetAlignmentStars( MainWindow ) as AlignmentStars5: Sub MainWindow.Event_EnableMenuItems( MainWindow )6: Sub Delegate.Invoke()7: Sub Application._CallFunctionWithExceptionHandling()</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6115</id>
-      <status>Fixed</status>
-      <resolutiondate>7/22/2017</resolutiondate>
-      <platform>All</platform>
-      <title>MWSuspender.Constructor: Nil Object Exception</title>
-      <description>Exception Type: Nil Object Exception1: Sub MWSuspender.Constructor( MainWindow )2: Sub GenericTextFunctionality.DoImport( FolderItem )3: Sub GenericTextFunctionality.DoImportExport( boolean )4: Function ObservationWindow._ImportGenericTextFile_Action( ObservationWindow ) as boolean5: Sub Delegate.Invoke()6: Sub Application._CallFunctionWithExceptionHandling()User description of above error trace:Trying to import some observations exported from SkyToolsOpen AstroPlanner then open Observation DatabaseImport "text file" export-20170116.txt with parameters Import_Parameters.txtGot error AstroPlanner Error Log.txtAll 3 files in files.zip (attached)Attachment: files.zip</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6120</id>
-      <status>Fixed</status>
-      <resolutiondate>7/22/2017</resolutiondate>
-      <platform>All</platform>
-      <title>MainWindow.ShowingColumn: Nil Object Exception</title>
-      <description>Exception Type: Nil Object Exception1: Function MainWindow.ShowingColumn( MainWindow, int32 ) as boolean2: Function MainWindow.ComputeVisibility( MainWindow, PlanObject, SiteResource ) as VisibilityUpdate3: Sub VisibilityThread.Event_Run()4: Sub APThread.Event_Run()User description of above error trace:Used command-w to close  a plan about a minute after I had added a new minor planet object, also having just downloaded new minor planet data.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6124</id>
-      <status>Fixed</status>
-      <resolutiondate>7/22/2017</resolutiondate>
-      <platform>All</platform>
-      <title>TelescopeMount.!MountCreate: Out Of Bounds Exception</title>
-      <description>Exception Type: Out Of Bounds Exception1: Function TelescopeMount.!MountCreate( string, int32 ) as TelescopeMount2: Function TelescopeMount.!GetMount( string, int32 ) as TelescopeMount3: Sub ResourcesWindow.SelectTelescopeFromListBtn_Action( ResourcesWindow, PushButton )4: Sub Delegate.IM_Invoke( PushButton )5: Sub AddHandler.Stub.15()6: Sub Delegate.Invoke()7: Sub Application._CallFunctionWithExceptionHandling()</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6122</id>
-      <status>Fixed</status>
-      <resolutiondate>7/22/2017</resolutiondate>
-      <platform>All</platform>
-      <title>TextOutputStream.!Create: Nil Object Exception</title>
-      <description>Exception Type: Nil Object Exception1: Function TextOutputStream.!Create( FolderItem ) as TextOutputStream2: Function Utility.CreateTextFile( FolderItem ) as TextOutputStream3: Sub ApplicationDataThread.Event_Run()4: Sub APThread.Event_Run()User description of above error trace:I cannot start astroplanner. </description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6104</id>
-      <status>Fixed</status>
-      <resolutiondate>7/1/2017</resolutiondate>
-      <platform>All</platform>
-      <title>Application.MouseCursor.Set: ThreadAccessingUIException</title>
-      <description>Exception Type: ThreadAccessingUIException1: Sub Application.MouseCursor.Set( int32, MouseCursor )2: Sub WaitCursor.Destructor()3: Function FITSImporter.OpenFromFile( FolderItem, boolean ) as Picture4: Function Utility.APOpenAsPicture( extends FolderItem ) as Picture5: Sub ObsFilesContainer.PicLoadingThread_Run( ObsFilesContainer, APThread )6: Sub Delegate.IM_Invoke( APThread )7: Sub AddHandler.Stub.1()8: Sub APThread.Event_Run()User description of above error trace:as soon as I try to open the Attachments tab within the Observations Tab this bug appears.Still trying to attach images to an observation</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6100</id>
-      <status>Fixed</status>
-      <resolutiondate>7/1/2017</resolutiondate>
-      <platform>All</platform>
-      <title>RatingsClass.GetList: Nil Object Exception</title>
-      <description>Exception Type: Nil Object Exception1: Function RatingsClass.GetList( PlanObservation ) as string()2: Function RatingComboWidget.ResourceList_GetPopupItems( RatingComboWidget, PopupMenuListBox, int32 ) as string()3: Function Delegate.IM_Invoke( PopupMenuListBox, int32 ) as string()4: Function AddHandler.Stub.60( int32 ) as string()5: Function PopupMenuListBox.Event_CellClick( int32, int32, int32, int32 ) as boolean6: Function StripedListBox.Event_CellClick( int32, int32, int32, int32 ) as boolean7: Sub Window.ShowModal()8: Function ObservationDatabase.EditObservation( PlanObservation ) as boolean9: Sub ObservationWindow.EditObservation( ObservationWindow )10: Sub ObservationWindow.obs_DoubleClick( ObservationWindow, StripedListBox )11: Sub Delegate.IM_Invoke( StripedListBox )12: Sub AddHandler.Stub.26()13: Sub Delegate.Invoke()14: Sub Application._CallFunctionWithExceptionHandling()User description of above error trace:Attempting to edit an observation from within the observation database. Double clicked the observation. Tried to change the Rating but it would not let me. Hit cancel, after which the editing window closed and this exception popped up.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6111</id>
-      <status>Fixed</status>
-      <resolutiondate>7/1/2017</resolutiondate>
-      <platform>All</platform>
-      <title>RatingsClass.GetList: Nil Object Exception</title>
-      <description>Exception Type: Nil Object Exception1: Function RatingsClass.GetList( PlanObservation ) as string()2: Function RatingComboWidget.ResourceList_GetPopupItems( RatingComboWidget, PopupMenuListBox, int32 ) as string()3: Function Delegate.IM_Invoke( PopupMenuListBox, int32 ) as string()4: Function AddHandler.Stub.60( int32 ) as string()5: Function PopupMenuListBox.Event_CellClick( int32, int32, int32, int32 ) as boolean6: Function StripedListBox.Event_CellClick( int32, int32, int32, int32 ) as boolean7: Sub Window.ShowModal()8: Function ObservationDatabase.EditObservation( PlanObservation ) as boolean9: Sub ObservationWindow.EditObservation( ObservationWindow )10: Sub ObservationWindow.EditObservationBtn_Action( ObservationWindow, NVBevelButton, string )11: Sub Delegate.IM_Invoke( NVBevelButton, string )12: Sub AddHandler.Stub.20( string )13: Sub NVBevelButton.DoAction( string )14: Sub NVBevelButton.Event_Action()15: Sub Delegate.Invoke()16: Sub Application._CallFunctionWithExceptionHandling()User description of above error trace:I was trying to edit an observation within the Observation Database. I clicked on the edit button and tried to pull down the Rating drop down. The rating options did not drop down.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6083</id>
-      <status>Fixed</status>
-      <resolutiondate>3/27/2017</resolutiondate>
-      <platform>MacOSX</platform>
-      <title>Return vs. Enter on Mac keyboard</title>
-      <description>Using an Apple wired keyboard with numerical keypad:When hitting the [return] key on the keyboard, a line break is inserted. One line break.When hitting the [enter] key on the numerical keypad at bottom right of the keyboard, TWO line breaks are inserted.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <nbugs>10</nbugs>
-    <nenhancements>0</nenhancements>
-  </release>
-  <release>
-    <version>2.3a11</version>
-    <note></note>
-    <releasedate>Monday, March 27, 2017</releasedate>
-    <issue>
-      <id>6080</id>
-      <status>Implemented</status>
-      <resolutiondate>3/25/2017</resolutiondate>
-      <platform>All</platform>
-      <title>Saving a protected (plan)file</title>
-      <description>Some of my planfiles are protected files that I like to save under different names and as unprotected files. Currently, when hitting Cmd-S nothing happens; the planfile is not overwritten as it is protected. However, it would be useful if a "Save as..." dialogue would pop up in this instance, as it would allow a protected file to be saved under a different name. Currently File - Save As... is required.</description>
-      <analysis></analysis>
-      <resolution>Implemented.</resolution>
-    </issue>
-    <issue>
-      <id>6081</id>
-      <status>Fixed</status>
-      <resolutiondate>3/25/2017</resolutiondate>
-      <platform>All</platform>
-      <title>Obs. database: User fields gone from Observartions List Columns</title>
-      <description>Probably not truly a bug, but I noticed the User Fields attached to observations are gone from the Observation List Columns in the Observation Database. I find them useful as I use them to record SQM values, lim. mag. etc. during a session.</description>
-      <analysis>If it was there before and is now gone - its a bug. It was probably caused when I added the # Obs entry recently.</analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6077</id>
-      <status>Implemented</status>
-      <resolutiondate>3/19/2017</resolutiondate>
-      <platform>All</platform>
-      <title>Cartes du Ciel V4</title>
-      <description>Cartes du Ciel V4 has been released. Update General Preferences &amp;gt; External to reflect this.</description>
-      <analysis></analysis>
-      <resolution>Implemented.</resolution>
-    </issue>
-    <issue>
-      <id>6074</id>
-      <status>Implemented</status>
-      <resolutiondate>3/13/2017</resolutiondate>
-      <platform>All</platform>
-      <title>Improve Excel file export</title>
-      <description>Remove all the flakey Excel export code and replace with modern code that exports .xlsx files.</description>
-      <analysis></analysis>
-      <resolution>Implemented. The Excel file format setting in General preferences has gone. Exported files should be compatible with all recent versions of MS Excel, on both platforms.</resolution>
-    </issue>
-    <issue>
-      <id>6082</id>
-      <status>Fixed</status>
-      <resolutiondate>2/26/2017</resolutiondate>
-      <platform>All</platform>
-      <title>RatingsClass.RatingsIndex: Nil Object Exception</title>
-      <description>Exception Type: Nil Object Exception1: Function RatingsClass.RatingsIndex( PlanObservation, string ) as int322: Sub RatingComboWidget.GetObservation( RatingComboWidget, PlanObservation )3: Sub ResourceComboWidget.GetObservation( ResourceComboWidget, PlanObservation )4: Function ObservationDatabase.EditObservation( PlanObservation ) as boolean5: Sub ObservationWindow.EditObservation( ObservationWindow )6: Sub ObservationWindow.obs_DoubleClick( ObservationWindow, StripedListBox )7: Sub Delegate.IM_Invoke( StripedListBox )8: Sub AddHandler.Stub.26()9: Sub Delegate.Invoke()10: Sub Application._CallFunctionWithExceptionHandling()User description of above error trace:I was trying to edit object ID in the Observation Database.  I wanted to see is update 10 would fix this.User description of above error trace:Editing observed object Name from within observation database.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6069</id>
-      <status>Fixed</status>
-      <resolutiondate>2/25/2017</resolutiondate>
-      <platform>All</platform>
-      <title>Check observation database each day</title>
-      <description>When the app is launched for the first time on any given day, the observation database is checked for consistency, even if no changes have been made. This can be irritating and unnecessary for large databases. Why not do the check only if changes have been made since the last check.</description>
-      <analysis></analysis>
-      <resolution>Fixed. Check only made if it hasnt been done in the past 24 hours, and changes have been made since the last check.</resolution>
-    </issue>
-    <issue>
-      <id>6068</id>
-      <status>Fixed</status>
-      <resolutiondate>2/25/2017</resolutiondate>
-      <platform>MacOSX</platform>
-      <title>Vertical slider in Telescope Mount Editor</title>
-      <description>The vertical slider widget in Telescope Mount Editor does not work correctly on MacOS Sierra (10.12).</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6067</id>
-      <status>Fixed</status>
-      <resolutiondate>2/24/2017</resolutiondate>
-      <platform>Windows</platform>
-      <title>Delegate.Invoke: RuntimeException</title>
-      <description>Exception Type: RuntimeException1: Sub Delegate.Invoke()2: Sub Application._CallFunctionWithExceptionHandling()User description of above error trace:The search boxes in the Observation Database will not except any keyboard entries. You can not type in a word to search. The app will crash.User description of above error trace:Tried to use search box in Observation Database under Observations: panel.</description>
-      <analysis>Darn. I thought Id fixed that one, but it seems the shortcut I used didnt quite work.</analysis>
-      <resolution>Fixed (and tested).</resolution>
-    </issue>
-    <nbugs>5</nbugs>
-    <nenhancements>3</nenhancements>
-  </release>
-  <release>
-    <version>2.3a10</version>
-    <note></note>
-    <releasedate>Friday, February 24, 2017</releasedate>
-    <issue>
-      <id>6061</id>
-      <status>Fixed</status>
-      <resolutiondate>2/23/2017</resolutiondate>
-      <platform>All</platform>
-      <title>Properties Vs Time disables AstroPlanner</title>
-      <description>AstroPlanner reduces/collapses to dock after initiating properties vs time request. At this point you cannot reopen AstroPlanner - only option is to quit. </description>
-      <analysis>The plan document window is hidden during computation, but is not being shown again at the end.</analysis>
-      <resolution>Fixed. Plan doc window reappears at the end of computation, and a warning is displayed while the doc window is absent.</resolution>
-    </issue>
-    <issue>
-      <id>6027</id>
-      <status>Fixed</status>
-      <resolutiondate>2/22/2017</resolutiondate>
-      <platform>All</platform>
-      <title>ERROR BOX ..........  Finding ID Synonyms for SUN</title>
-      <description>I have had problem with AP Beta2.3a8 earlier today after logging observation of the Sun live at about 13:40 GMT. I got error after finished setting time, Scope, etc a box popped up with statement? (Finding ID Synonyms for SUN) it would not clear so I closed it with window button top Left. Then program locked up, so had to close AP and restart. After that I opened Observation database to complete info on the session but when clicked on save AP went into report bug mode.</description>
-      <analysis></analysis>
-      <resolution>Fixed. Well, as Im not sure what the _actual_ error is, I have avoided looking for ID synonyms for any solar system objects (since they will not have any in the catalogues). At a minimum, this will speed things up.</resolution>
-    </issue>
-    <issue>
-      <id>6049</id>
-      <status>Fixed</status>
-      <resolutiondate>2/22/2017</resolutiondate>
-      <platform>All</platform>
-      <title>VisibilityThread.Event_Run: Nil Object Exception</title>
-      <description>Exception Type: Nil Object Exception1: Sub VisibilityThread.Event_Run()2: Sub APThread.Event_Run()</description>
-      <analysis></analysis>
-      <resolution>Fixed. Maybe.</resolution>
-    </issue>
-    <issue>
-      <id>6063</id>
-      <status>Implemented</status>
-      <resolutiondate>2/22/2017</resolutiondate>
-      <platform>All</platform>
-      <title>Open cluster in FoV chart</title>
-      <description>Would it be possible to increase the size of the red dots which depict an open cluster? Kind of hard to see</description>
-      <analysis></analysis>
-      <resolution>Implemented.</resolution>
-    </issue>
-    <issue>
-      <id>6060</id>
-      <status>Fixed</status>
-      <resolutiondate>2/22/2017</resolutiondate>
-      <platform>MacOSX</platform>
-      <title>Unable to Launch Cartes du Ciel</title>
-      <description>Right click on object then select center with Cartes du Ciel. I then select the Cartes du Ciel program from program pane but nothing happens. CdC does not launch.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6058</id>
-      <status>Fixed</status>
-      <resolutiondate>2/21/2017</resolutiondate>
-      <platform>All</platform>
-      <title>User defined fields range</title>
-      <description>I wanted to set up a user defined field in the Objects list display, and to set the range from 2 to 5. This then displays the message 'Valid: Between 2 and 5'. When I click OK, and then go back to 'Edit User-defined Field...' the message has changed to 'Valid: All values'.</description>
-      <analysis></analysis>
-      <resolution>Fixed. Bad values are now also correctly colored in red.</resolution>
-    </issue>
-    <issue>
-      <id>5946</id>
-      <status>Fixed</status>
-      <resolutiondate>2/17/2017</resolutiondate>
-      <platform>All</platform>
-      <title>XML export file incorrect</title>
-      <description>Exporting data in the XML format not usable on other systems. I use the exported file as input to Sequence Generator Pro for photography. SPG on import of the XML file displays this: Error importing data! Error loading AstroPlanner data at C:\...Object.xml.Unexpected end of file has occurred. The following elements are not closed: catalognotes, object, root. Line 784, position 19.</description>
-      <analysis>Weird characters in the Clark DSO catalogue are causing this. Workaround: avoid exporting the Catalogue Notes field.</analysis>
-      <resolution>Fixed. Notes fields are massaged before being exported.</resolution>
-    </issue>
-    <issue>
-      <id>6055</id>
-      <status>Implemented</status>
-      <resolutiondate>2/16/2017</resolutiondate>
-      <platform>All</platform>
-      <title>Sequence Generator Pro export</title>
-      <description>Add a feature to File &amp;gt; Export to export XML files formatted for Sequence Generator Pro.</description>
-      <analysis></analysis>
-      <resolution>Implemented. File &amp;gt; Export &amp;gt; Sequence Generator Pro Target List</resolution>
-    </issue>
-    <issue>
-      <id>6054</id>
-      <status>Fixed</status>
-      <resolutiondate>2/16/2017</resolutiondate>
-      <platform>Windows</platform>
-      <title>Exporting XML</title>
-      <description>When exporting XML files, the user is not given the choice of files with the .xml extension.</description>
-      <analysis></analysis>
-      <resolution>Fixed. When exporting XML, the XML file type is shown as the only option (similarly for JSON).
-</resolution>
-    </issue>
-    <issue>
-      <id>6051</id>
-      <status>Implemented</status>
-      <resolutiondate>2/12/2017</resolutiondate>
-      <platform>All</platform>
-      <title>Auto-merge all sessions</title>
-      <description>Add a feature to auto-merge any sessions that are less than t hours apart into a single session, where t is, say, 2 hours.</description>
-      <analysis></analysis>
-      <resolution>Implemented. Right-click the Sessions list in the observation database window.</resolution>
-    </issue>
-    <nbugs>7</nbugs>
-    <nenhancements>3</nenhancements>
-  </release>
-  <release>
-    <version>2.3a9</version>
-    <note></note>
-    <releasedate>Tuesday, February 7, 2017</releasedate>
-    <issue>
-      <id>6023</id>
-      <status>Implemented</status>
-      <resolutiondate>2/7/2017</resolutiondate>
-      <platform>All</platform>
-      <title>Add a coordinate grid line option for the FoV chart</title>
-      <description>Add an option to display RA/Dec coordinate grid superimposed on the FoV chart.</description>
-      <analysis></analysis>
-      <resolution>Implemented. Display Options &amp;gt; Display &amp;gt; RA/Dec Grid</resolution>
-    </issue>
-    <issue>
-      <id>6036</id>
-      <status>Implemented</status>
-      <resolutiondate>2/6/2017</resolutiondate>
-      <platform>All</platform>
-      <title>Observation database - nr. of observations logged column</title>
-      <description>It would be nice if a column was added to the Observations List Column in the observation database depicting the total number of observations present in the observation database for an object ID.</description>
-      <analysis></analysis>
-      <resolution>Implemented. # Obs column added.</resolution>
-    </issue>
-    <issue>
-      <id>6035</id>
-      <status>Implemented</status>
-      <resolutiondate>2/6/2017</resolutiondate>
-      <platform>All</platform>
-      <title>Transit - north or south of zenith?</title>
-      <description>Objects transit north or south of the zenith depending on observing site location and object declination. Currently the Transit column in the Objects tab only displays the transit altitude. It woulde be useful if "N" or "S" was added.For example, an object transiting at an altitude of 80 degrees north of the zenith: "80N".</description>
-      <analysis></analysis>
-      <resolution>Implemented. Now an option for that column.</resolution>
-    </issue>
-    <issue>
-      <id>6045</id>
-      <status>Implemented</status>
-      <resolutiondate>2/3/2017</resolutiondate>
-      <platform>All</platform>
-      <title>Sorting the custom highlighting scenario list</title>
-      <description>Maybe I'm just not seeing it, but is there a way to sort the highlight scenario list? As I add more and more custom highlighting rules and rename existing ones, it's getting more difficult to manage. I need a button to alphabetically re-sort the custom rules I've created.</description>
-      <analysis>In theory, clicking the title bar of that list should sort it. However, that does not appear to be the case, even though the title bar itself would indicate otherwise (which is a minor bug in itself).
-
-Note that the list is always sorted in ascending order when you open the dialog. i.e. workaround for V2.2 is to click OK and re-open the dialog to get the list sorted.</analysis>
-      <resolution>Implemented. Now sortable (by clicking the list heading).</resolution>
-    </issue>
-    <issue>
-      <id>6044</id>
-      <status>Implemented</status>
-      <resolutiondate>2/2/2017</resolutiondate>
-      <platform>All</platform>
-      <title>User Field boolean Yes/(blank)</title>
-      <description>As it is now, I added a boolean field set to Yes/No, but that leaves a No on the items when I uncheck them (un-yes them)... rather than just removing the Yes to match all the other plan objects. I also tried a Choice field, but it wont except blank spaces or null values.</description>
-      <analysis></analysis>
-      <resolution>Implemented. Boolean fields can now have blanks/nulls for the negative case.</resolution>
-    </issue>
-    <issue>
-      <id>6046</id>
-      <status>Implemented</status>
-      <resolutiondate>2/2/2017</resolutiondate>
-      <platform>All</platform>
-      <title>Allow extensions on UCAC3/4 zone files</title>
-      <description>UCAC3 and UCAC4 zone files have the name z001, etc. However, sometimes they can have an extension (e.g. z001.UC3 for UCAC3). Please allow such an extension to be used.</description>
-      <analysis></analysis>
-      <resolution>Implemented. Works with or without extensions.</resolution>
-    </issue>
-    <issue>
-      <id>6029</id>
-      <status>Implemented</status>
-      <resolutiondate>1/16/2017</resolutiondate>
-      <platform>All</platform>
-      <title>New driver for iEQ45Pro</title>
-      <description>Completely rewrite a separate native driver for the iOptron iEQ45Pro mount.</description>
-      <analysis>Based on V2 protocol document.</analysis>
-      <resolution>Implemented.</resolution>
-    </issue>
-    <issue>
-      <id>6021</id>
-      <status>Fixed</status>
-      <resolutiondate>1/10/2017</resolutiondate>
-      <platform>All</platform>
-      <title>In the higher controls the fonts are cut</title>
-      <description>In the higher controls (Latitude, Longitude, GMT Offset, etc) the fonts are cut at the bottom.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <nbugs>1</nbugs>
-    <nenhancements>7</nenhancements>
-  </release>
-  <release>
-    <version>2.3a8</version>
-    <note></note>
-    <releasedate>Sunday, January 8, 2017</releasedate>
-    <issue>
-      <id>6019</id>
-      <status>Implemented</status>
-      <resolutiondate>1/7/2017</resolutiondate>
-      <platform>MacOSX</platform>
-      <title>Add popup calendar to date selector widget on macOS</title>
-      <description>Add popup calendar to date selector widget on macOS. This makes selecting a date easier (?) than bumping the arrows and typing.</description>
-      <analysis></analysis>
-      <resolution>Implemented.</resolution>
-    </issue>
-    <issue>
-      <id>6018</id>
-      <status>Implemented</status>
-      <resolutiondate>1/7/2017</resolutiondate>
-      <platform>All</platform>
-      <title>Add V2 firmware support for iOptron mounts (e.g. iEQ45 Pro)</title>
-      <description>Improve iOptron internal driver to handle changes in the V2 protocol document.</description>
-      <analysis></analysis>
-      <resolution>Implemented.</resolution>
-    </issue>
-    <issue>
-      <id>6013</id>
-      <status>Fixed</status>
-      <resolutiondate>1/1/2017</resolutiondate>
-      <platform>All</platform>
-      <title>ProgressWindow.!ShowWindow: ThreadAccessingUIException</title>
-      <description>Exception Type: ThreadAccessingUIException1: Sub Window.__Init()2: Sub ProgressWindow.!ShowWindow( string, string, string )3: Sub CataloguesLock.Constructor( string, boolean )4: Sub FoVChart.GetInternalCatalogueObjects()5: Sub FoVChart.ExtractObjects()6: Sub FoVComputeThread.Event_Run()7: Sub APThread.Event_Run()</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6011</id>
-      <status>Fixed</status>
-      <resolutiondate>12/26/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Add User Image dialog doesn't allow opening *.fts files</title>
-      <description>The file type filter has *.fits and *.fit, but another common file extension produced by e.g. MaxIm DL, is *.fts. Would it be possible to add this please?</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6009</id>
-      <status>Fixed</status>
-      <resolutiondate>12/23/2016</resolutiondate>
-      <platform>Windows</platform>
-      <title>Missing DLL</title>
-      <description>I tried updating my 2.2 version to 2.3a but on attempting to open the program I get the message "This program can't start because api-ms-win-crt-runtime-I1-1-0.dll is missing...." and then a second window saying "Failed to locate Framework DLL"</description>
-      <analysis>This can happen if you are running Win 7 SP 1 but are not receiving OS updates, apparently.</analysis>
-      <resolution>Fixed (I hope). Installer now attempts to install the correct 32-bit runtime if not already present (might take 30 secs the first time).</resolution>
-    </issue>
-    <issue>
-      <id>6006</id>
-      <status>Fixed</status>
-      <resolutiondate>12/10/2016</resolutiondate>
-      <platform>All</platform>
-      <title>2.3a7 CRASHES on WinXP</title>
-      <description>When doing an update to the latest beta version, program will not launch.Says it cannot  link to a file in the dynamic library..Had to revert back and reinstall 2.2 to get it to work again. Can send a screen shot with specific failure but will mean crashing 2.2 again and have to reinstall....WinXP sp34gig ram</description>
-      <analysis>V2.3 is not compatible with WinXP. Win 7 SP1 is the minimum version now required for AstroPlanner V2.3 and beyond.</analysis>
-      <resolution>Fixed. Installer will now refuse to install on Windows versions before Win7 SP1.</resolution>
-    </issue>
-    <issue>
-      <id>5952</id>
-      <status>Implemented</status>
-      <resolutiondate>12/10/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Support for TCP/IP port</title>
-      <description>I have a 10micron mount which allows control over TCP/IP connection instead of serial port. Please add support for TCP/IP! Instead of sending the commands over a serial port the commands just have to be sent down a standard TCP/IP port (the mount speaks LX200 N = native LX200 Controller protocol as well as LX200 X = extended LX200 useful for Astro-Physics Controller). Newer versions of OSX do not work with virtual serial ports (which are a pain to set up anyway).</description>
-      <analysis>Using the Use Wifi-to-Serial adapter option and selecting the last (generic) type under that option will do what you want, even though such a device is not necessary.</analysis>
-      <resolution>Implemented. Changed option to Use Wifi-to-Serial adapter or TCP/IP, and added a Direct TCP/IP option to that just to make things clear.</resolution>
-    </issue>
-    <issue>
-      <id>5994</id>
-      <status>Fixed</status>
-      <resolutiondate>12/10/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Issues with External catalogues</title>
-      <description>If an external catalogue needs to access the UI to ask for a CD/DVD to be inserted, then a ThreadAccessingUIException can be generated.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6003</id>
-      <status>Fixed</status>
-      <resolutiondate>12/6/2016</resolutiondate>
-      <platform>All</platform>
-      <title>FoV legends window is blank</title>
-      <description>The floating window with the FoV legends is blank.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5999</id>
-      <status>Implemented</status>
-      <resolutiondate>12/5/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Dropdown menus: Show [Object] in catalogue</title>
-      <description>In the FoV Tab, right clicking an object gives the option to "Show [Object] catalogue". The Objects and Observations tab do not. Would it be possible to add this to the other tabs as well, right below "Lookup Synonyms..." in the dropdown menu?</description>
-      <analysis></analysis>
-      <resolution>Implemented. Added Show object in catalogue item to right-click menu for the object list.</resolution>
-    </issue>
-    <issue>
-      <id>6001</id>
-      <status>Fixed</status>
-      <resolutiondate>12/5/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Plan Info and Lookup Dailog Doesn't Allow for CR/LF</title>
-      <description>I added a new plan and wanted to add plan info to it. When I used the &amp;lt;enter&amp;gt; key in the text area for a new line, the &amp;lt;OK&amp;gt; button is highlighted and closes the Plan Info dialog. Same thing happened when I was added to the new plan using the Lookup button dialog I couldn't move to the next line because the &amp;lt;OK&amp;gt; button was highlighted and closed the dialog.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6002</id>
-      <status>Fixed</status>
-      <resolutiondate>12/5/2016</resolutiondate>
-      <platform>All</platform>
-      <title>App.MessageBox: ThreadAccessingUIException</title>
-      <description>Exception Type: ThreadAccessingUIException1: Sub Window.__Init()2: Sub App.MessageBox( int32, uint0, int0, int0, int0, nType, string, string, string, boolean )3: Sub Utility.APMsgBox( string )4: Function App.GetURLFrom( paramarray string() ) as string5: Function ImageDownloadThread.GetURL() as string6: Sub ImageDownloadThread.Event_Run()7: Sub APThread.Event_Run()User description of above error trace:Just starting the program.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6000</id>
-      <status>Fixed</status>
-      <resolutiondate>12/3/2016</resolutiondate>
-      <platform>All</platform>
-      <title>ScopeEmulatorWindow.ShowValues: ThreadAccessingUIException</title>
-      <description>Exception Type: ThreadAccessingUIException1: Sub Label.Caption.Set( int32, string )2: Sub ScopeEmulatorWindow.ShowValues( ScopeEmulatorWindow, boolean, boolean )3: Sub ScopeEmulatorWindow.SetRADec( ScopeEmulatorWindow, double, double )4: Sub TelescopeMount.GetNoLock( paramarray o&amp;lt;TelescopeMount&amp;gt;i4&amp;lt;MountConstants.MountParam&amp;gt;A1v )5: Function TelescopeMount.GetRADec( boolean, boolean ) as ReturnValue6: Function MainWindow.GetScopeRADec( MainWindow, boolean ) as ReturnValue7: Sub CompareCTDialog.FetchValue( CompareCTDialog, int32 )8: Sub CompareCTDialog.CompareCTThread_Run( CompareCTDialog, APThread )9: Sub Delegate.IM_Invoke( APThread )10: Sub AddHandler.Stub.1()11: Sub APThread.Event_Run()</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <nbugs>9</nbugs>
-    <nenhancements>4</nenhancements>
-  </release>
-  <release>
-    <version>2.3a7</version>
-    <note></note>
-    <releasedate>Saturday, November 26, 2016</releasedate>
-    <issue>
-      <id>5993</id>
-      <status>Fixed</status>
-      <resolutiondate>11/26/2016</resolutiondate>
-      <platform>All</platform>
-      <title>UCAC4Catalogue.FindFirst: ThreadAccessingUIException</title>
-      <description>Exception Type: ThreadAccessingUIException1: Sub Window.__Init()2: Sub App.MessageBox( int32, uint0, int0, int0, int0, nType, string, string, string )3: Function UCAC4Catalogue.FindFirst() as CatalogueFind4: Sub FoVChart.GetExternalCatalogueObjects()5: Sub FoVChart.ExtractObjects()6: Sub FoVComputeThread.Event_Run()7: Sub APThread.Event_Run()User description of above error trace:Setting options for Field of View display, then selected UCAC4 catolog &amp; the app had an error condition</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5991</id>
-      <status>Fixed</status>
-      <resolutiondate>11/21/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Coloured text in windows shows up black</title>
-      <description>Colored text in windows and dialogs that should be colored (e.g. blue for info, red for errors) is displayed in black.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5951</id>
-      <status>Fixed</status>
-      <resolutiondate>11/21/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Adding a non-square user image results in a squashed image with black borders in FoV</title>
-      <description>When I add a FITS image that I have capture with my ST-8E, I enter correct values for pixel scale, RA/Dec, Position Angle, etc.In the image manager, all seems well.However, when the image is viewed in the FoV pane, it has been forced square by adding black borders top and bottom, which means that the entered pixel scale is no longer correct and the image appears squashed. The black borders obscure items in the background.Additional info:Basically, if I add a user image that Ive taken with my ST-8E CCD, (1500-ish by 1024-ish, or roughly 3:2 aspect) the image gets forced into a square aspect ratio. The way it happens seems to vary depending on where it is viewed. On the object list it seems to be just squished into a square shape, which distorts the image. In the FoV screen, it gains solid black bars top and bottom to pad it to a square and because they are solid, they block out the background. Its probably right that different approaches are needed in the object list and FoV, but currently neither is really the right outcome. </description>
-      <analysis></analysis>
-      <resolution>Fixed. Bonus: The dialog that accepts user images is a bit better at entering size as well.</resolution>
-    </issue>
-    <issue>
-      <id>5988</id>
-      <status>Fixed</status>
-      <resolutiondate>11/20/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Short-term visibility indicator issue</title>
-      <description>Right-clicking the visibility indicators and turning them on and off produces very strange results, in particular if the Short Range Visibility Indicator is turned off, it is tricky to get it to come back on again. Turning off both short-term and long-term indicators results in ALL of the indicators disappearing, even though when looking in the View Options, the Alt/Az indicator and the Constellation indicator remain enabled. I cant exactly pin down the problem but it all seems to point to a redraw problem when the short-term indicator is off.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <nbugs>4</nbugs>
-    <nenhancements>0</nenhancements>
-  </release>
-  <release>
-    <version>2.3a6</version>
-    <note></note>
-    <releasedate>Saturday, November 19, 2016</releasedate>
-    <issue>
-      <id>5947</id>
-      <status>Implemented</status>
-      <resolutiondate>11/19/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Add the current plan objects to the 'Find Objects Within Radius' query</title>
-      <description>Basically the summary says it all. Is it possible to add the current working plan objects to what's being queried in the Find Objects Within Radius search?I'm an imager, and one of the things I check is what other objects are close by so I know how to frame my images. But, I've got many targets in my database that are not in any of the standard catalogs. So, being able to search my database too is really helpful.Whether it's a separate search, or included in the current choice, that doesn't matter. Just being able to include my database is really helpful.</description>
-      <analysis></analysis>
-      <resolution>Implemented. Added a Include Plan Objects checkbox in the dialog. In the results window, those plan objects found will have From Plan in the Catalogue column.</resolution>
-    </issue>
-    <issue>
-      <id>5986</id>
-      <status>Implemented</status>
-      <resolutiondate>11/19/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Resetting Plan Creation Wizard criteria</title>
-      <description>Is there a way to reset the plan creation wizard back to original defaults? Ive messed around with it so much I cant get double stars in any plan I set up with it.</description>
-      <analysis>Note: The Rebuild button in File &amp;gt; Catalogue Manager &amp;gt; Preferences will do this. However, I will add an extra button which does it more explicitly.</analysis>
-      <resolution>Implemented. Reset Criteria button added to Catalogue Manager &amp;gt; Preferences. Bonus: The Rebuild button no longer resets the criteria.</resolution>
-    </issue>
-    <issue>
-      <id>5987</id>
-      <status>Implemented</status>
-      <resolutiondate>11/19/2016</resolutiondate>
-      <platform>All</platform>
-      <title>QHY 183C</title>
-      <description> Just received a QHY 183C CMOS camera. Is it possible to add it and the 163 to the imaging sensors?</description>
-      <analysis>Not actually a code change. Update via Update button on the list of Imagers in V2.2 or before.</analysis>
-      <resolution>Implemented.</resolution>
-    </issue>
-    <issue>
-      <id>5985</id>
-      <status>Fixed</status>
-      <resolutiondate>11/19/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Text above FoV chart gone missing</title>
-      <description>The text above the FoV chart (RA, Dec, etc.) has disappeared.</description>
-      <analysis>New behavior in the latest compiler. Note that this will affect V2.2 if run after V2.3a5 or before, since it effectively resets the preferences setting.</analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5939</id>
-      <status>Implemented</status>
-      <resolutiondate>11/14/2016</resolutiondate>
-      <platform>Windows</platform>
-      <title>Import PNG user images needed</title>
-      <description>Looks like we can't import user images in PNG format, only JPEG. Having that possibility would be greatly appreciated.</description>
-      <analysis></analysis>
-      <resolution>Implemented.</resolution>
-    </issue>
-    <issue>
-      <id>5982</id>
-      <status>Implemented</status>
-      <resolutiondate>11/14/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Alt/Az Indicator</title>
-      <description>Please add an option to rotate the Az indicator as I would like West on top.</description>
-      <analysis></analysis>
-      <resolution>Implemented. Added a Rotate 90 degrees item to the right-click menu. Together with Flip N/S and Flip E/W, this should cover all possibilities.</resolution>
-    </issue>
-    <issue>
-      <id>5980</id>
-      <status>Fixed</status>
-      <resolutiondate>11/14/2016</resolutiondate>
-      <platform>MacOSX</platform>
-      <title>Beep sound when nested modal dialogs used</title>
-      <description>When a modal dialog is used within another modal dialog, a beep (error?) sound is emitted (even though the nested dialogs work fine).</description>
-      <analysis>Well, um, this shouldnt be allowed in the first place, by definition of modal dialog, but works OK on Windows and used to work on the Carbon version of the Mac app. Difficult to resolve in a cross-platform way without serious redesign.</analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5979</id>
-      <status>Fixed</status>
-      <resolutiondate>11/11/2016</resolutiondate>
-      <platform>MacOSX</platform>
-      <title>Text encodings issue on Mac</title>
-      <description>Some text strings on Mac are displaying with the incorrect text encoding (symptoms: weird characters)</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5977</id>
-      <status>Fixed</status>
-      <resolutiondate>11/11/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Choosing Make Observation Doesn't Switch to Observation Tab</title>
-      <description>I think the application used to do this. Whenever I right click on an object in the Objects Tab and chose "Make Observation" the app does not switch over to the Observations Tab. Didn't the application do this in the past or was I imagining this behavior?</description>
-      <analysis>Actually the Make Observation BUTTON does that, but the right-click does not. It probably should switch tabs too.</analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5978</id>
-      <status>Fixed</status>
-      <resolutiondate>11/11/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Dates on Short-Term Visibility widget are "fuzzy"</title>
-      <description>Dates on Short-Term Visibility widget are "fuzzy"</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5975</id>
-      <status>Fixed</status>
-      <resolutiondate>11/11/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Long-term Visibility hangs up in "compute"</title>
-      <description>The long-term visibility widget hangs up in "compute" mode if the chart type is Time of night</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <nbugs>6</nbugs>
-    <nenhancements>5</nenhancements>
-  </release>
-  <release>
-    <version>2.3a5</version>
-    <note></note>
-    <releasedate>Friday, November 11, 2016</releasedate>
-    <issue>
-      <id>5974</id>
-      <status>Fixed</status>
-      <resolutiondate>11/11/2016</resolutiondate>
-      <platform>Windows</platform>
-      <title>Windows installer does not allow selection of install directory</title>
-      <description>The Windows installer no longer allows selection of install directory, which would be useful for multiple versions.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5973</id>
-      <status>Fixed</status>
-      <resolutiondate>11/10/2016</resolutiondate>
-      <platform>Windows</platform>
-      <title>Runtime error when first accessing internet</title>
-      <description>The first time you access the internet from AstroPlanner on Win 10, you get a runtime error dialog that reports:Common\Sockets\TCPSocketWin.cpp: 99Failure condition: !name.IsEmpty()</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5971</id>
-      <status>Implemented</status>
-      <resolutiondate>11/10/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Shortcut Key for Adjust All List Columns to Fit Text</title>
-      <description>I find I use this option (Adjust All List Columns to Fit Text) all the time and I would love to see a shortcut key (CTRL+ ???) assigned to it.</description>
-      <analysis></analysis>
-      <resolution>Implemented. Ctrl(Cmd)-Shift-U. Boy, that was easy.</resolution>
-    </issue>
-    <issue>
-      <id>5970</id>
-      <status>Fixed</status>
-      <resolutiondate>11/9/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Seeing DropDown Not Appearing</title>
-      <description>I've notice on some of the plans I've downloaded recently the Seeing Dropddown does not appear. Am I missing something? Is there a setting I haven't discovered yet?</description>
-      <analysis>As you discovered, its associated with the Lord Rating. If youre not displaying it, the Seeing popup is not shown. I need to make this clearer.</analysis>
-      <resolution>Fixed. Instead of making the setting invisible, its now disabled if the Lords Rating column isnt showing, and a help tag has been added to clarify things.</resolution>
-    </issue>
-    <issue>
-      <id>5969</id>
-      <status>Fixed</status>
-      <resolutiondate>11/9/2016</resolutiondate>
-      <platform>All</platform>
-      <title>RectControl.HelpTag.Set: ThreadAccessingUIException</title>
-      <description>Exception Type: ThreadAccessingUIException1: Sub RectControl.HelpTag.Set( int32, string )2: Sub SunInfoCanvas.SetHelpTag()3: Sub SunInfoCanvas.Altitude.Set( int32, double )4: Sub MainWindow.DoSunStuff( MainWindow )5: Function MainWindow.CheckVisibilityRestrictions( MainWindow ) as boolean6: Sub ComputeVisibility.Data( MainWindow, int32, boolean )7: Sub PlanObject.Data( MainWindow, int32, boolean )8: Function PlanObject.DataFormatted( MainWindow, int32 ) as string9: Function MainWindow.ComputeVisibility( MainWindow, PlanObject, SiteResource ) as VisibilityUpdate10: Sub VisibilityThread.Event_Run()11: Sub APThread.Event_Run()User description of above error trace:Download attached file from Contributors Dowmload. App crashed and I had to use Task Manager to kill it. Restarted AP, blank plan was opened, closed blank plan, opened te attached lan ans this Application Exception was opened.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <nbugs>4</nbugs>
-    <nenhancements>1</nenhancements>
-  </release>
-  <release>
-    <version>2.3a4</version>
-    <note></note>
-    <releasedate>Monday, November 7, 2016</releasedate>
-    <issue>
-      <id>5966</id>
-      <status>Fixed</status>
-      <resolutiondate>11/7/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Notification.!NotifyInternal: Illegal Cast Exception</title>
-      <description>Exception Type: Illegal Cast Exception1: Sub Notification.!NotifyInternal( int32 )2: Sub Notification.!NotifyAsync( string, int32 )3: Sub MainWindow.Event_Close( MainWindow )4: Sub Delegate.Invoke()5: Sub Application._CallFunctionWithExceptionHandling()</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5965</id>
-      <status>Fixed</status>
-      <resolutiondate>11/7/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Notification.!NotifyInternal: Nil Object Exception</title>
-      <description>Exception Type: Nil Object Exception1: Sub Notification.!NotifyInternal( int32 )2: Sub Notification.!NotifyAsync( string, int32 )3: Sub TimeUpdateThread.Event_Run()4: Sub APThread.Event_Run()User description of above error trace:open plan documentwindows 10</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5964</id>
-      <status>Fixed</status>
-      <resolutiondate>11/7/2016</resolutiondate>
-      <platform>MacOSX</platform>
-      <title>Hard crashes when opening plan docs</title>
-      <description>Hard crashes occur when opening plan docs.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <nbugs>3</nbugs>
-    <nenhancements>0</nenhancements>
-  </release>
-  <release>
-    <version>2.3a3</version>
-    <note></note>
-    <releasedate>Sunday, November 6, 2016</releasedate>
-    <issue>
-      <id>6130</id>
-      <status>Fixed</status>
-      <resolutiondate>11/6/2016</resolutiondate>
-      <platform>All</platform>
-      <title>MainWindow.NewPlanCreationWizard: Nil Object Exception</title>
-      <description>Exception Type: Nil Object Exception1: Sub MainWindow.NewPlanCreationWizard( MainWindow )2: Sub App.NewPlanCreationWizard( MainWindow )3: Function App._FilePlanCreationWizard_Action() as booleanUser descriptions of above error trace:a. I was using NewPlanCreation Wizzardb. Hello i used Plan creatation Wizard..c. Using the plan creation wizardd. Started with a blank untitles-0.apd window and used the New Plan Wizard to populate objects.e. Tried to run the Plan creation wizard. Program bugs out before any results appear.f. Pressed finish on the plan creation wizard.g. Used the plan creation wizard. Nothing else.h. Creating a new plan.User description of above error trace:Closing a new, empty plan.User description of above error trace:I was using Plan Creation Wizard.  I had gone through all of the wizard's steps (answered all of the Wizard's questions) and clicked [Finished] to create a new plan.  That's when I encountered this error.Note: I uninstalled an earlier version of Astroplanner and then downloaded V.2.2. I also downloaded the Barnard catalog, closed and reopened Astroplanner, then tried using the plan creation wizard.</description>
-      <analysis>Not sure whats causing this. However, I have modified the suspect code to return an error message that should throw some light on the issue, rather than crash the app.</analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>6106</id>
-      <status>Fixed</status>
-      <resolutiondate>11/6/2016</resolutiondate>
-      <platform>All</platform>
-      <title>MainWindow.NewPlanCreationWizard: Nil Object Exception</title>
-      <description>Exception Type: Nil Object Exception1: Sub MainWindow.NewPlanCreationWizard( MainWindow )2: Sub App.NewPlanCreationWizard( MainWindow )3: Function App._FilePlanCreationWizard_Action() as booleanUser descriptions of above error trace:a. After fresh start of V2.2 open Plan creation Wizard...level4 ...then error..b. Using plan creation wizard. After I accept the plan this error dialog appeared.c. I added a new observation plamd. Still happening in 10.11.4e. New Plan Creation Wizard, final step. Still a crasher for me in 23a1f. Viewing Plan wizard.User description of above error trace:sing the plan wizardUser description of above error trace:Using plan wizard, asking for 25 objects from the Messier catalog.This failure has been happening ever since I downloaded AstroPlanner.  This is not my first report.  I would like to know what work is being done to resolve the problem.  I teach a course on astronomy and will pass along to my students what you are doing to resolve this problem (I was advising them on obsering planning tools).Thank you.</description>
-      <analysis>Not sure whats causing this. However, I have modified the suspect code to return an error message that should throw some light on the issue, rather than crash the app.</analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5942</id>
-      <status>Fixed</status>
-      <resolutiondate>11/6/2016</resolutiondate>
-      <platform>All</platform>
-      <title>TextMods.Apply: Nil Object Exception</title>
-      <description>Exception Type: Nil Object Exception1: Function TextMods.Apply( string ) as string2: Function PlanObject.XML( MainWindow, ImportExportVariable(), TextMods(), boolean, XmlDocument, XmlNode, int32, double ) as XmlNode3: Sub ImpExpDialog.DrawSample( ImpExpDialog, Graphics )4: Sub ImpExpDialog.sample_Paint( ImpExpDialog, Canvas, Graphics )5: Sub Delegate.IM_Invoke( Canvas, Graphics )6: Sub AddHandler.Stub.15( Graphics )7: Sub RectControl.Visible.Set( int32, boolean )8: Sub ImpExpDialog.CheckButtons( ImpExpDialog )9: Sub ImpExpDialog.FormatChange( ImpExpDialog )10: Sub ImpExpDialog.impexpFormat_Action( ImpExpDialog, APRadioButton )11: Sub Delegate.IM_Invoke( APRadioButton )12: Sub AddHandler.Stub.15()13: Sub Window.ShowModal()14: Sub GenericTextFunctionality.DoImportExport( boolean )15: Function MainWindow._ExportGenericTextFile_Action( MainWindow ) as boolean16: Sub Delegate.Invoke()17: Sub Application._CallFunctionWithExceptionHandling()User description of above error trace: Exporting a xml file into a local directory via tightVNC link.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5958</id>
-      <status>Fixed</status>
-      <resolutiondate>11/6/2016</resolutiondate>
-      <platform>All</platform>
-      <title>TextMods.Apply: Nil Object Exception</title>
-      <description>Exception Type: Nil Object Exception1: Function TextMods.Apply( string ) as string2: Function PlanObject.XML( MainWindow, ImportExportVariable(), TextMods(), boolean, XmlDocument, XmlNode, int32, double ) as XmlNode3: Sub ImpExpDialog.DrawSample( ImpExpDialog, Graphics )4: Sub ImpExpDialog.sample_Paint( ImpExpDialog, Canvas, Graphics )5: Sub Delegate.IM_Invoke( Canvas, Graphics )6: Sub AddHandler.Stub.15( Graphics )7: Sub Window.ShowModal()8: Sub GenericTextFunctionality.DoImportExport( boolean )9: Function MainWindow._ExportGenericTextFile_Action( MainWindow ) as boolean10: Sub Delegate.Invoke()11: Sub Application._CallFunctionWithExceptionHandling()</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5960</id>
-      <status>Fixed</status>
-      <resolutiondate>11/6/2016</resolutiondate>
-      <platform>All</platform>
-      <title>RectControl.Width.Get: ThreadAccessingUIException</title>
-      <description>Exception Type: ThreadAccessingUIException1: Function RectControl.Width.Get( int32 ) as int322: Function LongTermVisibilityCanvas.PixelsPerDay.Get( int32 ) as int323: Sub LongTermVisibilityThread.Event_Run()4: Sub APThread.Event_Run()</description>
-      <analysis>Happens if the Long-term visibility is set to use a period other than Annual. </analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <nbugs>5</nbugs>
-    <nenhancements>0</nenhancements>
-  </release>
-  <release>
-    <version>2.3a2</version>
-    <note></note>
-    <releasedate>Saturday, November 5, 2016</releasedate>
-    <issue>
-      <id>5959</id>
-      <status>Fixed</status>
-      <resolutiondate>11/5/2016</resolutiondate>
-      <platform>Windows</platform>
-      <title>AstroPlanner Help.vv issue</title>
-      <description>For some folk, a missing AstroPlanner Help.vv message appears at startup and the app closes.</description>
-      <analysis>Old code</analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <nbugs>1</nbugs>
-    <nenhancements>0</nenhancements>
-  </release>
-  <release>
-    <version>2.3a1</version>
-    <note></note>
-    <releasedate>Saturday, November 5, 2016</releasedate>
-    <issue>
-      <id>5955</id>
-      <status>Fixed</status>
-      <resolutiondate>10/27/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Sharpless catalogue issue</title>
-      <description>Cannot search the Sharpless catalogue, using (say) Sh2-15.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5954</id>
-      <status>Fixed</status>
-      <resolutiondate>10/22/2016</resolutiondate>
-      <platform>All</platform>
-      <title>"00" DEC value in export as "APT Object list"</title>
-      <description>The DEC degree value is errornous set to 00 for positive declinations in exported APT style xml file.example:NGC891in astroplanner:RA 02h 22m 33s DEC +4220,8'in exported APT style xml-file:  &amp;lt;Obj&amp;gt;    &amp;lt;Object&amp;gt;NGC891&amp;lt;/Object&amp;gt;    &amp;lt;Type&amp;gt;G&amp;lt;/Type&amp;gt;    &amp;lt;Const&amp;gt;And&amp;lt;/Const&amp;gt;    &amp;lt;Mag&amp;gt;10.00&amp;lt;/Mag&amp;gt;    &amp;lt;Size&amp;gt;13,5&amp;lt;/Size&amp;gt;    &amp;lt;RA&amp;gt;02:22:33,2&amp;lt;/RA&amp;gt;    &amp;lt;DEC&amp;gt;00:20:53,9&amp;lt;/DEC&amp;gt;  &amp;lt;/Obj&amp;gt;This occurs with all positive declinations, negative ones are not affected.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5847</id>
-      <status>Implemented</status>
-      <resolutiondate>3/23/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Object sequence in FoV</title>
-      <description>Object sequence in FoV, just as in the "sky" tab</description>
-      <analysis></analysis>
-      <resolution>Implemented. Display Options &amp;gt; Display &amp;gt; Plan object sequence. Line color can be selected in the FoV preferences.</resolution>
-    </issue>
-    <issue>
-      <id>5892</id>
-      <status>Fixed</status>
-      <resolutiondate>3/23/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Some Display Options Truncated</title>
-      <description>Some of the display options are truncated on my MacBook Pro.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5870</id>
-      <status>Implemented</status>
-      <resolutiondate>3/15/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Streamline Long Term Visibility Indicator</title>
-      <description>IMO, the Long Term Visibility Indicator has too many moving parts. Please consider as an option to display or not to display the moon.</description>
-      <analysis></analysis>
-      <resolution>Implemented. Right-clicking the indicator now reveals a Show moon item that can be toggled on/off.</resolution>
-    </issue>
-    <issue>
-      <id>5888</id>
-      <status>Implemented</status>
-      <resolutiondate>3/15/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Display Star Type</title>
-      <description>Please display Star Type when hovering over a star in the Sky Chart.</description>
-      <analysis></analysis>
-      <resolution>Implemented.</resolution>
-    </issue>
-    <issue>
-      <id>5887</id>
-      <status>Implemented</status>
-      <resolutiondate>3/15/2016</resolutiondate>
-      <platform>All</platform>
-      <title>UCAC4 ApassV</title>
-      <description>I do a photometry with DSLR. In the Skychart, how to recover magnitudes ApassV, ApassR or ApassB of UCAC4.</description>
-      <analysis>Assume here that were talking about external UCAC4 catalogue on the FoV chart.</analysis>
-      <resolution>Implemented. Added APASS V, B, g, r, and i magnitudes to external UCAC4 catalogue settings.</resolution>
-    </issue>
-    <issue>
-      <id>5885</id>
-      <status>Implemented</status>
-      <resolutiondate>3/6/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Add catalogue IDs to separate user fields</title>
-      <description>Currently you can add all excess IDs from a catalogue to a plan user-defined field called Other IDs (as a comma-separated list). It would be nice to be able to add them as separate user-defined fields for each ID, as an option.</description>
-      <analysis></analysis>
-      <resolution>Implemented.</resolution>
-    </issue>
-    <issue>
-      <id>5869</id>
-      <status>Fixed</status>
-      <resolutiondate>2/13/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Clear Sky Chart no longer works</title>
-      <description>Clear Sky Chart no longer works as of Feb, 2016.</description>
-      <analysis>Server side changes now require HTTP 1.1.</analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5867</id>
-      <status>Implemented</status>
-      <resolutiondate>2/13/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Time Offset arrows</title>
-      <description>Please consider adding left and right arrows to the Time offset slider so you can decrease and increase time by one hour increments. The slider bar is difficult to use in this manner.</description>
-      <analysis></analysis>
-      <resolution>Implemented.</resolution>
-    </issue>
-    <issue>
-      <id>5858</id>
-      <status>Fixed</status>
-      <resolutiondate>2/6/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Exporting selected objects actually exports all objects</title>
-      <description>Exporting selected objects to another format exports the entire list.1. Select 2 objects in a plan.2. Click File | Export | SkySafari Observing List3. Choose Selected and click Export.4. Give it a name and click Save.5. Open the file in a text editor.  All objects were exported.6. This also happens with Generic Text exports.</description>
-      <analysis>I suspect this is because it could not find a suitable match for some of the objects in the SkySafari database. However, it should report this.</analysis>
-      <resolution>Fixed. Now reports if any objects were not exported for any reason.</resolution>
-    </issue>
-    <issue>
-      <id>5859</id>
-      <status>Fixed</status>
-      <resolutiondate>1/31/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Constellations exported with incorrect ObjectIDs for SkySafari</title>
-      <description>Constellations are exported with ObjectID 4,-1,-1 to SkySafari format.  They do not show up in SkySafari because the ID is wrong.  I have found that ObjectID 5,0,74 works for constellations. </description>
-      <analysis></analysis>
-      <resolution>Fixed. Also fixed import.</resolution>
-    </issue>
-    <issue>
-      <id>5835</id>
-      <status>Implemented</status>
-      <resolutiondate>1/25/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Option for apparent magnitude at Best Time</title>
-      <description>An option that computes the apparent magnitude at the best time (as opposed to the system date/time), or a new column that provides same, would be quite useful. </description>
-      <analysis></analysis>
-      <resolution>Implemented.</resolution>
-    </issue>
-    <issue>
-      <id>5848</id>
-      <status>Implemented</status>
-      <resolutiondate>1/25/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Force constellation view in DSS/user image window</title>
-      <description>The ability to select default view in DSS/user image window between:1. Last selected (or image prefer)2. Force constellation</description>
-      <analysis></analysis>
-      <resolution>Implemented. Added option to Object List preferences.</resolution>
-    </issue>
-    <issue>
-      <id>5852</id>
-      <status>Implemented</status>
-      <resolutiondate>1/25/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Increase number of object/observation list columns</title>
-      <description>Number of columns is restricted to 62 or 63. If you display all columns and a lot of user-defined columns this limit can be exceeded.</description>
-      <analysis>This is a limit of the framework list box. It has recently been increased in the latest framework.</analysis>
-      <resolution>Implemented. Now at c. 254 columns.</resolution>
-    </issue>
-    <issue>
-      <id>5849</id>
-      <status>Implemented</status>
-      <resolutiondate>1/24/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Allow date/time qualifiers as values in the highlight rules</title>
-      <description>Allow values from the Date/Time setting panel to be used in highlight rules.  For example, I have a highlight rule, which I have to manually adjust for the time of the year, to only show objects that are visible from sunset / civil twilight etc to around 1:30am when I am going to stop star gazing.Instead of me having to look up what time sunset will be on my planned date and then manually update my rule with that time, it would be nice to be able to specify that I want to see all objects visible from Sunset / nautical twilight etc to 1:30am.  That way I would never have to manually adjust the rule again.  Even having an offset like 15 minutes after the event would be nice.</description>
-      <analysis></analysis>
-      <resolution>Implemented.</resolution>
-    </issue>
-    <issue>
-      <id>5799</id>
-      <status>Fixed</status>
-      <resolutiondate>1/23/2016</resolutiondate>
-      <platform>All</platform>
-      <title>Script editor issues</title>
-      <description>(In 2.3a1) a. Tabbing in the script editor tabs out of the editor. b. Auto-indenting is on the fritz.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5838</id>
-      <status>Fixed</status>
-      <resolutiondate>12/15/2015</resolutiondate>
-      <platform>All</platform>
-      <title>Export lists to APT not working.</title>
-      <description>I recently started using APT to control my imaging sessions and have run into a problem with importing lists from AstroPlanner to it. When I export an object to an APT object list if the object has a positive ot north declination it is exported as 00 instead of whatever it should be. Here is an example. This is a cut and paste of an APT exported list of LBN 589. It's location in dec. should be +68.36.6 but is doesn't come out that way.&amp;lt;?xml version="1.0"?&amp;gt;-&amp;lt;Objects&amp;gt;-&amp;lt;Obj&amp;gt;&amp;lt;Object&amp;gt;LBN589&amp;lt;/Object&amp;gt;&amp;lt;NameNotes&amp;gt;Cederblad 214&amp;lt;/NameNotes&amp;gt;&amp;lt;Type&amp;gt;BN&amp;lt;/Type&amp;gt;&amp;lt;Const&amp;gt;Cep&amp;lt;/Const&amp;gt;&amp;lt;Mag&amp;gt;999.00&amp;lt;/Mag&amp;gt;&amp;lt;Size&amp;gt;65x20&amp;lt;/Size&amp;gt;&amp;lt;RA&amp;gt;00:03:36.0&amp;lt;/RA&amp;gt;&amp;lt;DEC&amp;gt;00:36:36.0&amp;lt;/DEC&amp;gt;&amp;lt;/Obj&amp;gt;&amp;lt;/Objects&amp;gt;As you can see, it skips the +68 portion of the declination. This occurs on all objects with a + dec that I have tried so far. Is there a fix for this other than manually editing each object?Thanks,RichardPS I'm using version 2.2 of AstroPlanner</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5814</id>
-      <status>Fixed</status>
-      <resolutiondate>8/24/2015</resolutiondate>
-      <platform>All</platform>
-      <title>No stars at NCP</title>
-      <description>As I get closer to the NCP all the stars dissapear from the FOV except the plan objects of Kochab and Polaris. Eps Umi shows with stars and a 5 degree field but as soon as delta Umi moves towards the centre of the 5 degree field then all the stars dissapear. I have the All Sky compiled, SAO and Tycho II Stellar catalogues ticked. </description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5800</id>
-      <status>Fixed</status>
-      <resolutiondate>8/4/2015</resolutiondate>
-      <platform>All</platform>
-      <title>Opening Observation Database window maxes out processor</title>
-      <description>Opening Observation Database window maxes out processor.</description>
-      <analysis>Probably 2.3a1 only.</analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5801</id>
-      <status>Fixed</status>
-      <resolutiondate>8/4/2015</resolutiondate>
-      <platform>All</platform>
-      <title>Double-clicking observation issue</title>
-      <description>Double-clicking observation in the Observations tab opens the Obs DB window, but doesnt select the associated session and observation (unless the window was already open).</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5620</id>
-      <status>Implemented</status>
-      <resolutiondate>8/4/2015</resolutiondate>
-      <platform>All</platform>
-      <title>Tie the selected scope/eyepiece combo in observations to FoV chart</title>
-      <description>When a selected eyepiece &amp; telescope combo is chosen in the Observations window, make that pair the preselected default in the FoV chart. I quite often write up a log entry, and switch to FoV to refresh any details.  It would be nice if that window was aware of what is highlighted in the observations window and used that information.</description>
-      <analysis></analysis>
-      <resolution>Implemented. Added Reproduce Observation in Field of View Chart to the contextual (right-click) menu for observations.</resolution>
-    </issue>
-    <issue>
-      <id>5638</id>
-      <status>Implemented</status>
-      <resolutiondate>8/3/2015</resolutiondate>
-      <platform>All</platform>
-      <title>Script / Observation HTML</title>
-      <description>Would it be possible to add restrict in order to export selected observations by selecting object Type (ie: Galaxy, planet..)</description>
-      <analysis>This is not an enhancement to the application, and the script can be used in AP V2.0 or after.</analysis>
-      <resolution>Implemented. Added a Restrict to Types field to the dialog. Put comma-separated types in there to restrict to observations of the given type/s. e.g. Galaxy,Star,Planet.</resolution>
-    </issue>
-    <issue>
-      <id>5688</id>
-      <status>Implemented</status>
-      <resolutiondate>8/3/2015</resolutiondate>
-      <platform>All</platform>
-      <title>Computing FoV using field stop diameter</title>
-      <description>I would like to see provision for entering the field stop diameter of an eyepiece in order to improve the accuracy of true field of view calculations.Yes, it is true that users do not always know that information, so the input of such data should be optional. Where the data is indeed entered by the user, the software could use the field stop diameter to calculate true field of view accurately, reverting to the potentially inaccurate use of apparent field of view for that calculation only in cases where the field stop diameter has not been specified.</description>
-      <analysis>True FoV  = (field stop diameter)/(telescope focal length) * 180/pi  (degrees)http://www.televue.com/engine/TV3b_page.asp?id=79#.VJyk7AAA</analysis>
-      <resolution>Implemented. In Resources &amp;gt; Eyepieces you can now choose to enter either Apparent FoV or Field Stop Diameter. In either case, the other value will be computed from the first.</resolution>
-    </issue>
-    <issue>
-      <id>5790</id>
-      <status>Fixed</status>
-      <resolutiondate>8/2/2015</resolutiondate>
-      <platform>All</platform>
-      <title>USNO B1.0 and NOMAD on-line catalogue issues</title>
-      <description>USNO B1.0 and NOMAD on-line catalogues do not work, or only work sporadically.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5768</id>
-      <status>Fixed</status>
-      <resolutiondate>7/22/2015</resolutiondate>
-      <platform>All</platform>
-      <title>Catalog preferences will not add additional IDs to Notes field</title>
-      <description>Go to Edit | Preferences | Catalog Preferences.  In the Preferences tab for "Creating Plan objects from catalog entries", tell it to add additional IDs to the Notes field.  Go to the object list and hit +.  Tell it SAO90896 and choose All.  Add the item from the Sky 2000 catalog.  51 Peg is not added to the Notes field. Now set this preference to add additional IDs to either the "More IDs" user field or the Name field.  Now when you add the object, 51 Peg is added to the corresponding field.</description>
-      <analysis>This is not really a bug. The IDs are actually put in the Catalogue Notes field, not the User Notes field. However, this is confusing, so I will make it clearer (and give the option of Catalogue or User Notes as the target).</analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5778</id>
-      <status>Fixed</status>
-      <resolutiondate>7/21/2015</resolutiondate>
-      <platform>All</platform>
-      <title>ObservationStats.CreateChart: Out Of Bounds Exception</title>
-      <description>Exception Type: Out Of Bounds Exception1: Sub Picture.Constructor( int32, int32, int32 )2: Sub ObservationStats.CreateChart( ObservationStats )3: Sub ObservationStats.Event_Resized( ObservationStats )4: Sub Window.Width.Set( int32, int32 )5: Sub ObservationWindow.StatsResize( ObservationWindow )6: Sub ObservationWindow.Event_Resized( ObservationWindow )7: Sub Delegate.Invoke()8: Sub Application._CallFunctionWithExceptionHandling()User description of above error trace:I had just deleted an observation of the moon in the Observation Database.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5753</id>
-      <status>Fixed</status>
-      <resolutiondate>7/21/2015</resolutiondate>
-      <platform>All</platform>
-      <title>incrementing time when day changes</title>
-      <description>when incrementing time with the buttons when the date changes a day it actually changes two days.</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5786</id>
-      <status>Fixed</status>
-      <resolutiondate>7/21/2015</resolutiondate>
-      <platform>All</platform>
-      <title>R.A. coordinate bug when importing</title>
-      <description>When importing objects to a planfile from a .txt file (possibly other formats), R.A. of the objects is off whenever a R.A. format including a decimal second is selected. Two screenshots attached, the arrows point to the setting and resulting R.A. offset.Declination is fine.Attachment: decimal second.jpgAttachment: no decimal second.jpg</description>
-      <analysis>This is a localization bug (in regions where a decimal comma is used). 
-Workarounds: Avoid the HH:MM:SS.S option. Use the HH:MM:SS option - it works fine, even with decimal fraction in seconds.</analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>3642</id>
-      <status>Fixed</status>
-      <resolutiondate>7/18/2015</resolutiondate>
-      <platform>Windows</platform>
-      <title>Bluetooth causes long startup in Windows7</title>
-      <description>I'm now in the process of migrating my XP laptop into a new Windows7 laptop. With the same setup and cataloges the Windows7 takes 30 seconds while the XP is doing the startup in 10 seconds.The new laptop should be faster? It has windows7, a dual core and faster processor and 2GB of memory.  Strange...2010-08-23: In Windows 7. Only when serial communicaton is over the Bluetooth link. Normal startup when using direct comm port.</description>
-      <analysis>User subsequently reported that this is the "Bluetooth problem".</analysis>
-      <resolution>Fixed. Hopefully. Finally.</resolution>
-    </issue>
-    <issue>
-      <id>5785</id>
-      <status>Implemented</status>
-      <resolutiondate>7/18/2015</resolutiondate>
-      <platform>MacOSX</platform>
-      <title>Convert Mac application to Cocoa</title>
-      <description>The application has been a Carbon app. It needs to be a Cocoa app. This will have multiple advantages (UI much nicer, automatic support for various OS X features like dictation, spell-checking, etc., more stable, Retina screen support).This will mean that the app can only be used with OS X V10.6 and beyond. Support for PPC will fall away.</description>
-      <analysis></analysis>
-      <resolution>Implemented.</resolution>
-    </issue>
-    <issue>
-      <id>5766</id>
-      <status>Fixed</status>
-      <resolutiondate>7/18/2015</resolutiondate>
-      <platform>All</platform>
-      <title>Bug in the Export function for APT ?</title>
-      <description>There is a bug in the Export format for Astro Photography Tool. When exporting the RAvalues come across properly, but the DEC value does not. Only the Minutes part of the DEC comes across.Actual ExampleNGC925RA 02h 27m 18s and  DEC 33 35.0The exported value showsRA 02h 27m 18s and  DEC 00 35.0</description>
-      <analysis></analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <issue>
-      <id>5782</id>
-      <status>Fixed</status>
-      <resolutiondate>7/18/2015</resolutiondate>
-      <platform>All</platform>
-      <title>Problem Observation Database Statistics : Not appears (Agosto) August</title>
-      <description>I am writing because I have most likely encountered a problem in Observation database Statistics.If selecting "All Time" not appears August (Agosto).</description>
-      <analysis>This is probably because the entries for August were put in the Other category. </analysis>
-      <resolution>Fixed. Added an extra slice that kicks in before other. </resolution>
-    </issue>
-    <issue>
-      <id>5780</id>
-      <status>Fixed</status>
-      <resolutiondate>7/18/2015</resolutiondate>
-      <platform>All</platform>
-      <title>Field of View not showing stars near NCP</title>
-      <description>I found a regression in Astroplaner 2.2. When the Field of View points near the NCP (north pole), no stars are shown. The screen shows  constellation figures and images but no stars.  I tested with the 'all-sky compiled' catalogue and others.Moving the Field of View away from the NCP makes the stars suddenly appear when the distance to NCP is about 1.5 times the current field of fiew diameter. This worked with previous versions, so apparently it was introduced by one of the more recent beta versions.</description>
-      <analysis>If the NCP (or SCP) is in the FoV this will happen. No workaround other than moving the pole outside the FoV.</analysis>
-      <resolution>Fixed.</resolution>
-    </issue>
-    <nbugs>20</nbugs>
-    <nenhancements>14</nenhancements>
-  </release>
-</root>
