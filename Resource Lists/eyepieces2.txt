@@ -1,5 +1,5 @@
-2017-04-23 10:05:57
-Vendor	Model	Focal Length (mm)	AFoV (deg)	Barrel (")	Reticle
+2014-05-12 17:28:45
+Manufacturer	Model	F.Length (mm)	AFOV (*)	Barrel (")	Reticle
 Agena AstroProducts	ED 12.5mm	12.5	50	1.25	
 Agena AstroProducts	ED 14mm	14	50	1.25	
 Agena AstroProducts	ED 18mm	18	50	1.25	
@@ -84,22 +84,15 @@ Celestron	E-Lux Kellner 26mm	26	56	2
 Celestron	E-Lux Plossl 10mm	10	50	1.25	
 Celestron	E-Lux Plossl 25mm	25	50	1.25	
 Celestron	E-Lux Plossl 26mm	26	50	2	
-Celestron	E-Lux Plossl 32mm	32	50	2	
 Celestron	E-Lux Plossl 40mm	40	50	2	
 Celestron	E-Lux Plossl 6mm	6	50	1.25	
-Celestron	Luminos 10mm	10	82	1.25	
-Celestron	Luminos 15mm	15	82	1.25	
-Celestron	Luminos 19mm	19	82	2	
-Celestron	Luminos 23mm	23	82	2	
-Celestron	Luminos 31mm	31	82	2	
-Celestron	Luminos 7mm	7	82	1.25	
 Celestron	Micro Guide 12.5mm	12.5	42	1.25	5
 Celestron	NexStar Plossl 10mm	10	52	1.25	
 Celestron	NexStar Plossl 13mm	13	52	1.25	
 Celestron	NexStar Plossl 17mm	17	52	1.25	
 Celestron	NexStar Plossl 25mm	25	50	1.25	
 Celestron	NexStar Plossl 3.6mm	3.6	40	1.25	
-Celestron	NexStar Plossl 32mm	32	44	1.25	
+Celestron	NexStar Plossl 32mm	32	52	1.25	
 Celestron	NexStar Plossl 40mm	40	46	1.25	
 Celestron	NexStar Plossl 6mm	6	52	1.25	
 Celestron	NexStar Plossl 8mm	8	52	1.25	
@@ -125,12 +118,6 @@ Celestron	Ultima 35mm	35	49	1.25
 Celestron	Ultima 42mm	42	36	1.25	
 Celestron	Ultima 5mm	5	50	1.25	
 Celestron	Ultima 7.5mm	7.5	51	1.25	
-Celestron	Ultima Duo 10mm	10	68	1.25/2	
-Celestron	Ultima Duo 13mm	13	68	1.25/2	
-Celestron	Ultima Duo 17mm	17	68	1.25/2	
-Celestron	Ultima Duo 21mm	21	68	1.25/2	
-Celestron	Ultima Duo 5mm	5	68	1.25/2	
-Celestron	Ultima Duo 8mm	8	68	1.25/2	
 Celestron	Ultima LX 13mm	13	70	1.25/2	
 Celestron	Ultima LX 17mm	17	70	1.25/2	
 Celestron	Ultima LX 22mm	22	70	2	
@@ -298,6 +285,7 @@ Orion	Epic ED-2 7.5mm	7.5	55	1.25
 Orion	Epic ED-2 9.5mm	9.5	55	1.25	
 Orion	Expanse 15mm	15	66	1.25	
 Orion	Expanse 20mm	20	66	1.25	
+Orion	Expanse 20mm	20	66	1.25	
 Orion	Expanse 6mm	6	66	1.25	
 Orion	Expanse 9mm	9	66	1.25	
 Orion	Explorer II 10mm	10	50	1.25	
@@ -426,7 +414,6 @@ Skywatcher	UWA 15mm	16	66	1.25
 Skywatcher	UWA 20mm	20	66	1.25	
 Skywatcher	UWA 6mm	6	66	1.25	
 Skywatcher	UWA 9mm	9	66	1.25	
-Solomark	12.5mm Plossl Illuminated Reticle	12.5	52	1.25	2|5|1
 Takahashi	Long Eye Relief 12.5mm	12.5	52	1.25	
 Takahashi	Long Eye Relief 18mm	18	52	1.25	
 Takahashi	Long Eye Relief 24mm	24	52	1.25	
@@ -441,11 +428,6 @@ Takahashi	Orthoscopic 25mm	25	42	0.965
 Takahashi	Orthoscopic 5mm	2.8	42	0.965	
 Takahashi	Orthoscopic 7mm	7	42	0.965	
 Takahashi	Orthoscopic 9mm	9	42	0.965	
-Tele Vue	DeLite 11mm	11	62	1.25	
-Tele Vue	DeLite 15mm	15	62	1.25	
-Tele Vue	DeLite 5mm	5	62	1.25	
-Tele Vue	DeLite 7mm	7	62	1.25	
-Tele Vue	DeLite 9mm	9	62	1.25	
 Tele Vue	Delos 10mm	10	72	1.25	
 Tele Vue	Delos 12mm	12	72	1.25	
 Tele Vue	Delos 14mm	14	72	1.25	
@@ -494,7 +476,6 @@ Tele Vue	Plossl 17mm	17	50	1.25
 Tele Vue	Plossl 20mm	20	50	1.25	
 Tele Vue	Plossl 21mm	21	50	1.25	
 Tele Vue	Plossl 25mm	25	50	1.25	
-Tele Vue	Plossl 26mm	26	50	1.25	
 Tele Vue	Plossl 32mm	32	50	1.25	
 Tele Vue	Plossl 40mm	40	43	1.25	
 Tele Vue	Plossl 55mm	55	50	2	
@@ -509,11 +490,6 @@ Tele Vue	Radian 4mm	4	60	1.25
 Tele Vue	Radian 5mm	5	60	1.25	
 Tele Vue	Radian 6mm	6	60	1.25	
 Tele Vue	Radian 8mm	8	60	1.25	
-Tele Vue	Wide Field 15mm	15	65	1.25/2	
-Tele Vue	Wide Field 19mm	19	65	1.25/2	
-Tele Vue	Wide Field 24mm	24	65	1.25/2	
-Tele Vue	Wide Field 32mm	32	65	2	
-Tele Vue	Wide Field 40mm	40	65	2	
 TMB	Bino-Lite 20mm	20	60	1.25	
 TMB	Paragon 30mm	30	69	2	
 TMB	Paragon Orthoscopic 40mm	40	69	2	
@@ -564,15 +540,11 @@ University Optics	Orthoscopic 5mm	5	43	1.25
 University Optics	Orthoscopic 6mm	6	43	1.25	
 University Optics	Orthoscopic 7mm	7	43	1.25	
 University Optics	Orthoscopic 9mm	9	43	1.25	
-University Optics	Plossl 55mm	55	50	2	
 VERNONScope	Brandon 12mm	12	50	1.25	
 VERNONScope	Brandon 16mm	16	50	1.25	
 VERNONScope	Brandon 24mm	24	50	1.25	
 VERNONScope	Brandon 32mm	32	50	1.25	
 VERNONScope	Brandon 8mm	8	50	1.25	
-Vixen	HR 1.6mm	1.6	42	1.25	
-Vixen	HR 2.4mm	2.4	42	1.25	
-Vixen	HR 2mm	2	42	1.25	
 Vixen	Lanthanum LV 10mm	10	50	1.25	
 Vixen	Lanthanum LV 12mm	12	50	1.25	
 Vixen	Lanthanum LV 15mm	15	50	1.25	
@@ -594,32 +566,6 @@ Vixen	LVW 22mm (Lanthanum)	22	65	1.25
 Vixen	LVW 3.5mm (Lanthanum)	3.5	65	1.25	
 Vixen	LVW 5mm (Lanthanum)	5	65	1.25	
 Vixen	LVW 8mm (Lanthanum)	8	65	1.25	
-Vixen	NLV 50mm	50	45	2	
-Vixen	NLVW 30mm	30	65	2	
-Vixen	NPL 10mm	10	50	1.25	
-Vixen	NPL 15mm	15	50	1.25	
-Vixen	NPL 20mm	20	50	1.25	
-Vixen	NPL 25mm	25	50	1.25	
-Vixen	NPL 30mm	30	50	1.25	
-Vixen	NPL 40mm	40	40	1.25	
-Vixen	NPL 4mm	4	50	1.25	
-Vixen	NPL 6mm	6	50	1.25	
-Vixen	NPL 8mm	8	50	1.25	
-Vixen	SLV 10mm	10	50	1.25	
-Vixen	SLV 12mm	12	50	1.25	
-Vixen	SLV 15mm	15	50	1.25	
-Vixen	SLV 2.5mm	2.5	45	1.25	
-Vixen	SLV 20mm	20	50	1.25	
-Vixen	SLV 25mm	25	50	1.25	
-Vixen	SLV 4mm	4	45	1.25	
-Vixen	SLV 5mm	5	45	1.25	
-Vixen	SLV 6mm	6	45	1.25	
-Vixen	SLV 9mm	9	50	1.25	
-Vixen	SSW ED 10mm	10	83	1.25	
-Vixen	SSW ED 14mm	14	83	1.25	
-Vixen	SSW ED 3.5mm	3.5	83	1.25	
-Vixen	SSW ED 5mm	5	83	1.25	
-Vixen	SSW ED 7mm	7	83	1.25	
 William Optics	SPL 12.5mm	12.5	55	1.25	
 William Optics	SPL 3mm	3	55	1.25	
 William Optics	SPL 6mm	6	55	1.25	

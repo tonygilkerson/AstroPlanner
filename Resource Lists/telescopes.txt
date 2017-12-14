@@ -1,4 +1,4 @@
-2017-04-24 14:45:03
+2014-10-28 08:51:04
 Vendor	Model	Aperture (mm)	Focal Length (mm)	Finder FOV (*)	Protocol	Subtype	Optics (1=Refractor,2=Newt,3=Cass,4=Schmidt,5=SCT,6=Mak-Cass,7=Mak-Newt,8=RC,9=Dall-Kirkham,10=Schmidt-Newt)
 10 Micron	RC-360 F/8	360	2880	0		0	8
 Antares	10 inch Dobsonian	250	1200	0		0	2
@@ -38,9 +38,6 @@ Astro-Physics	92mm f/7 Stowaway	92	604	0		0	1
 Astro-Tech	10" f/4 Imaging Newtonian	250	1000	0		0	2
 Astro-Tech	10" f/8 RC	250	2000	0		0	8
 Astro-Tech	12" f/4 Imaging Newtonian	300	1200	0		0	2
-Astro-Tech	12" f/8 RC	304	2432	0		0	8
-Astro-Tech	14" f/8 RC	356	2850	0		0	8
-Astro-Tech	16" f/8 RC	406	3250	0		0	8
 Astro-Tech	6" f/4 Imaging Newtonian	150	600	0		0	2
 Astro-Tech	6" f/9 RC	152	1370	0		0	8
 Astro-Tech	8" f/4 Imaging Newtonian	200	800	0		0	2
@@ -148,12 +145,8 @@ Celestron	NexStar 6se	150	1500	0	NexStar	4	5
 Celestron	NexStar 8	203	2032	0	NexStar	-2	5
 Celestron	NexStar 80GT	80	400	0	NexStar	9	1
 Celestron	NexStar 8i	203	2032	0	NexStar	4	5
-Celestron	NexStar Evolution 6	150	1500	0	NexStar	3	5
-Celestron	NexStar Evolution 8	203.2	2032	0	NexStar	3	5
-Celestron	NexStar Evolution 9.25	235	2350	0	NexStar	3	5
 Celestron	NextStar 8 GPS	203	2000	0	NexStar	3	5
 Celestron	NextStar 9 1/4 GPS	235	2350	0	NexStar	3	5
-Celestron	Rowe-Ackermann Schmidt Astrograph	279	620	0		0	4
 Celestron	Ultima 2000	203	2032	0	U2K	0	5
 Ceravolo	300 Astrograph	300	1470	0		0	3
 Ceravolo	300 Astrograph	300	2700	0		0	3
@@ -171,14 +164,6 @@ Explore Scientific	AR152 f/6.5 Air-Spaced Doublet AR Series Achromat	152	988	0		
 Explore Scientific	Carbon Fiber ED127 f/7.5 Air-Spaced Triplet Apo	127	952	0		0	1
 Explore Scientific	David H. Levy Comet Hunter	152	731	0		0	7
 Explore Scientific	ED102 f/7 Air-Spaced Triplet Apo	102	714	0		0	1
-GSO	GSD150C	152	1200	0		0	2
-GSO	GSD200C	200	1200	0		0	2
-GSO	GSD250C	250	1250	0		0	2
-GSO	GSD250C	250	1250	0		0	2
-GSO	GSD300C	300	1500	0		0	2
-GSO	GSD680	200	1200	0		0	2
-GSO	GSD880	250	1250	0		0	2
-GSO	GSD980	300	1500	0		0	2
 Hardin	DSH-10	250	1250	0		0	2
 Hardin	DSH-12	300	1500	0		0	2
 Hardin	DSH-6	150	1200	0		0	2
@@ -289,8 +274,6 @@ Meade	Series 6000 130mm	130	910	0		0	1
 Meade	Series 6000 80mm	80	480	0		0	1
 Meade	StarFinder 12.5"	318	1525	5		0	2
 Meade	StarFinder 16"	406	1830	5		0	2
-Meade	StarNavigator 102mm	102	800	0		0	1
-Meade	StarNavigator 90mm	90	800	0		0	1
 Obsession	12.5" f/5	317.5	1588	0		0	2
 Obsession	15" f/4.5	381	1715	0		0	2
 Obsession	18" f/4.5	457	2057	0		0	2
@@ -420,11 +403,6 @@ Orion	StarSeeker III 102mm	102	1300	0	SynScan	3	6
 Orion	StarSeeker III 114mm	114	500	0	SynScan	3	2
 Orion	StarSeeker III 127mm	127	1540	0	SynScan	3	6
 Orion	StarSeeker III 90mm	90	1250	0	SynScan	3	6
-Orion	Starseeker IV 114	114	500	0	SynScan	3	2
-Orion	Starseeker IV 127	127	1540	0	SynScan	3	6
-Orion	Starseeker IV 130	130	650	0	SynScan	3	2
-Orion	Starseeker IV 150	150	750	0	SynScan	3	2
-Orion	Starseeker IV 80	80	900	0	SynScan	3	1
 Orion	Transporter 70mm Min-EQ	70	350	0		0	1
 Orion	VX102-ED Refractor	102	665	8		0	1
 Orion	VX102-FL Refractor	102	920	8		0	1
@@ -469,7 +447,6 @@ Sky-Watcher	Equinox 100	100	900	0		0	1
 Sky-Watcher	Equinox 120	120	900	0		0	1
 Sky-Watcher	Equinox 66	66	400	0		0	1
 Sky-Watcher	Equinox 80	80	500	0		0	1
-Sky-Watcher	Explorer 150PL	150	1200	0		0	2
 Sky-Watcher	Mak 80	80	1000	0		0	6
 Sky-Watcher	Mak150 Pro	150	1800	0		0	6
 Sky-Watcher	Mak180 Pro	180	2700	0		0	6
@@ -532,7 +509,6 @@ Stellarvue	SV Raptor 105	105	735	0		0	1
 Stellarvue	SV Raptor 70ED	70	420	0		0	0
 Stellarvue	SV Raptor 90T	90	630	0		0	0
 Takahashi	BRC-250	250	1268	6.3		0	8
-Takahashi	CCA-250	250	1247	0		0	3
 Takahashi	CN-212 (Cass)	212	2630	6.3		0	3
 Takahashi	CN-212 (Newt)	212	820	6.3		0	2
 Takahashi	E-160	180	530	6.3		0	2
@@ -586,26 +562,6 @@ Tele Vue	TV 102	102	880	0		0	1
 Tele Vue	TV-60	60	361	0		0	1
 Tele Vue	TV-76	76	480	0		0	1
 Tele Vue	TV-85	85	600	0		0	1
-Teleskop	INED70	70	420	0		0	1
-Teleskop	ONTC808	203	800	0		0	2
-Teleskop	Starscope767	76	700	0		0	2
-Teleskop	TLAPO804	80	480	0		0	1
-Teleskop	TSAPO100Q	100	580	0		0	1
-Teleskop	TSAPO107C	107	700	0		0	1
-Teleskop	TSAPO71Q	71	347	0		0	1
-Teleskop	UNC1506	150	600	0		0	2
-Teleskop	UNC1507	150	750	0		0	2
-Teleskop	UNC1507	150	750	0		0	2
-Teleskop	UNC1509	150	900	0		0	2
-Teleskop	UNC20010	200	1000	0		0	2
-Teleskop	UNC20012	200	1200	0		0	2
-Teleskop	UNC20012	200	1200	0		0	2
-Teleskop	UNC2008	200	800	0		0	2
-Teleskop	UNC25410	254	1000	0		0	2
-Teleskop	UNC25412	254	1250	0		0	2
-Teleskop	UNC2541EQ6	254	1000	0	SynScan	3	2
-Teleskop	UNC30512	305	1200	0		0	2
-Teleskop	UNC30515	305	1500	0		0	2
 TMB	TMB 100 f/8	100	800	0		0	1
 TMB	TMB 105 f/6.2	105	650	0		0	1
 TMB	TMB 115 f/7	115	805	0		0	1
@@ -622,39 +578,6 @@ TMB	TMB 80 f/6	80	480	0		0	1
 TMB	TMB 80 f/7.5	80	600	0		0	1
 TMB	TMB 80SS	80	504	0		0	1
 TMB	TMB 92SS	92	506	0		0	1
-TS-Optics	50mm f6.6 APO	50	330	0		0	1
-TS-Optics	ED 102mm f/7	102	714	0		0	1
-TS-Optics	ED 110mm f/7	110	770	0		0	1
-TS-Optics	ED 70mm f/6 Travel APO	70	420	0		0	1
-TS-Optics	ED 80mm f/7	80	560	0		0	1
-TS-Optics	Imaging Star 100mm f/5.8	100	580	0		0	1
-TS-Optics	Imaging Star 102mm f/5.1	102	520.2	0		0	1
-TS-Optics	Imaging Star 130mm f/5	130	650	0		0	1
-TS-Optics	Imaging Star 65mm f/6.5	65	422.5	0		0	1
-TS-Optics	Imaging Star 70mm f/6.78	70	474.6	0		0	1
-TS-Optics	Imaging Star 71mm f/4.9	71	347.9	0		0	1
-TS-Optics	Imaging Star 80mm f/4.4	80	352	0		0	1
-TS-Optics	Megastar 150/1400mm	150	1400	0		0	2
-TS-Optics	Newtonian 114/900mm	114	900	0		0	2
-TS-Optics	Newtonian 76/700mm	76	700	0		0	2
-TS-Optics	Photoline 102mm f/7 APO	102	714	0		0	1
-TS-Optics	Photoline 107mm f/6.5 APO	107	695.5	0		0	1
-TS-Optics	Photoline 115mm f/6.96 APO	115	800.4	0		0	1
-TS-Optics	Photoline 130mm f/6.62 APO	130	860.6	0		0	1
-TS-Optics	Photoline 130mm f/7 APO	130	910	0		0	1
-TS-Optics	Photoline 150mm f/6.6 APO	150	990	0		0	1
-TS-Optics	Photoline 60mm f/5.5 APO	60	330	0		0	1
-TS-Optics	Photoline 70mm f/6 APO	70	420	0		0	1
-TS-Optics	Photoline 72mm f/5.5 APO	72	396	0		0	1
-TS-Optics	Photoline 80mm f/6 APO	80	480	0		0	1
-TS-Optics	Photoline 80mm f/6.25 APO	80	500	0		0	1
-TS-Optics	Photoline 80mm f/7 APO	80	560	0		0	1
-TS-Optics	Photoline 90mm f/6.6 APO	90	594	0		0	1
-TS-Optics	Starscope 130/650mm	130	650	0		0	2
-TS-Optics	Starscope 60/900mm	60	900	0		0	1
-TS-Optics	Starscope 70/700mm	70	700	0		0	1
-TS-Optics	Starscope 70/900mm	70	900	0		0	1
-TS-Optics	Starscope 80/900mm	80	900	0		0	1
 Vernonscope	Brandon 94mm	94	640	0		0	1
 Vixen	102M	102	1000	0		0	1
 Vixen	80M	80	910	0		0	1

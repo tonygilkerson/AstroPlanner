@@ -1,5 +1,6 @@
-2017-01-19 09:47:16
-* UID	Vendor	Model	Geometry	Protocol	SubType
+* Unique ID# > 0	Manufacturer	Product	Type	Protocol	SubType (-ve = not detectable)
+* 1000-1999 Mac only
+* 2000-2999 Win only
 1	AstroPlanner	Emulated Go To		Emulated GoTo	0
 2	AstroPlanner	Emulated DSC	DSC	Emulated DSC	0
 3	AstroPlanner	Scripted Driver		Scripted	0
@@ -39,8 +40,6 @@
 130	Wildcard Innovations	Argo Navis	DSC	Argo Navis	0
 140	Tasco	Starguide	Fork	NexStar	-1
 150	iOptron	GOTONOVA		iOptron	-1
-151	iOptron	iEQ45Pro		iOptron2	1
-152	iOptron	CEM60		iOptron2	1
 160	Vixen	Star Book	GEM	StarBook	-1
 170	GTD	Pulsar 2	GEM	Pulsar 2	-1
 180	Vixen	SkySensor	GEM	SkySensor	0

@@ -1,0 +1,99 @@
+2014-12-25 15:54:44
+Vendor	Model	Type	Bandpass From (nm)	Bandpass To (nm)	Min.Exit Pupil (mm)	Description	Bandpass From 2(nm)	Bandpass To 2(nm)
+Astrodon	E-Series Blue	Blue	400	510	0	CCD imaging filter	0	0
+Astrodon	E-Series Green	Green	500	570	0	CCD imaging filter	0	0
+Astrodon	E-Series Luminance	Luminance	400	710	0	CCD imaging filter	0	0
+Astrodon	E-Series Red	Red	615	690	0	CCD imaging filter	0	0
+DGM Optics	Galaxy Contrast Filter	Rejection	100	540	0	The Galaxy Contrast Enhancement™ filter aids in the visual observation of galaxies and milky way dust clouds and dark lanes.	590	1000
+DGM Optics	Narrow Band Nebula Filter	Narrowband	480	510	0		0	0
+DGM Optics	O-III	Oxygen III	490	510	0		0	0
+Johnson/Bessell	B	UBVRI filter	390	490	0	Nominal CW/L = 440nm. Nominal FWHM = 100nm. Nominal Transmission > 55%.	0	0
+Johnson/Bessell	I	UBVRI filter	750	1050	0	Nominal CW/L = 900nm. Nominal FWHM = 300nm. Nominal Transmission > 70%.	0	0
+Johnson/Bessell	R	UBVRI filter	570	690	0	Nominal CW/L = 630nm. Nominal FWHM = 120nm. Nominal Transmission > 70%.	0	0
+Johnson/Bessell	U	UBVRI filter	335	395	0	Nominal CW/L = 365nm. Nominal FWHM = 60nm. Nominal Transmission > 50%.	0	0
+Johnson/Bessell	V	UBVRI filter	505	595	0	Nominal CW/L = 550nm. Nominal FWHM = 90nm. Nominal Transmission > 70%.	0	0
+Kodak	Wratten #102	Yellow-green	0	0	0		0	0
+Kodak	Wratten #106	Amber	0	0	0		0	0
+Kodak	Wratten #11	Yellowish-green	0	0	0	Color Correction.	0	0
+Kodak	Wratten #12	Deep yellow	0	0	0	Minus blue filter.	0	0
+Kodak	Wratten #15	Deep yellow	0	0	0		0	0
+Kodak	Wratten #16	Yellow-orange	0	0	0		0	0
+Kodak	Wratten #18A	Deep violet-blue	0	0	0	Passes only IR/UV.	0	0
+Kodak	Wratten #1A	Skylight	0	0	0	Absorbs UV. Reduces haze.	0	0
+Kodak	Wratten #21	Orange	0	0	0	Blue and blue-green absorption.	0	0
+Kodak	Wratten #22	Deep orange	0	0	0		0	0
+Kodak	Wratten #23	Light red	0	0	0		0	0
+Kodak	Wratten #24	Red	0	0	0	Complements #47B and #61.	0	0
+Kodak	Wratten #25	Red tricolor	0	0	0	Infrared photography.	0	0
+Kodak	Wratten #25A	Red	0	0	0		0	0
+Kodak	Wratten #26	Red	0	0	0		0	0
+Kodak	Wratten #29	Deep red	0	0	0	Infrared photography.	0	0
+Kodak	Wratten #2A	Pale yellow	0	0	0	Absorbs UV.	0	0
+Kodak	Wratten #2B	Pale yellow	0	0	0	Absorbs UV, slightly less than #2A.	0	0
+Kodak	Wratten #2C		0	0	0	Absorbs UV.	0	0
+Kodak	Wratten #2E	Pale yellow	0	0	0	Absorbs UV, slightly more than #2A.	0	0
+Kodak	Wratten #3	Light yellow	0	0	0	Absorbs sky blue.	0	0
+Kodak	Wratten #32	Magenta	0	0	0	Minus-green. Complements #12 minus-blue and #44A minus-red.	0	0
+Kodak	Wratten #34A	Violet	0	0	0		0	0
+Kodak	Wratten #38A	Blue	0	0	0	Absorbs red, UV and some green.	0	0
+Kodak	Wratten #4	Yellow	0	0	0		0	0
+Kodak	Wratten #44	Light blue-green	0	0	0	Minus-red. UV absorption.	0	0
+Kodak	Wratten #44A	Light blue-green	0	0	0		0	0
+Kodak	Wratten #47	Blue tricolor	0	0	0	Complements #29 and #61.	0	0
+Kodak	Wratten #47A	Light blue	0	0	0		0	0
+Kodak	Wratten #47B	Deep blue tricolor	0	0	0		0	0
+Kodak	Wratten #50	Deep blue	0	0	0		0	0
+Kodak	Wratten #56	Light green	0	0	0		0	0
+Kodak	Wratten #58	Green tricolor	0	0	0		0	0
+Kodak	Wratten #6	Light yellow	0	0	0		0	0
+Kodak	Wratten #61	Deep green tricolor	0	0	0	Complements #29 and #47.	0	0
+Kodak	Wratten #70	Red	0	0	0	Infrared photography.	0	0
+Kodak	Wratten #8	Yellow	0	0	0	Absorbs more blue than #3.	0	0
+Kodak	Wratten #80A	Blue	0	0	0		0	0
+Kodak	Wratten #80B	Blue	0	0	0		0	0
+Kodak	Wratten #80C	Blue	0	0	0		0	0
+Kodak	Wratten #80D	Blue	0	0	0		0	0
+Kodak	Wratten #81A	Pale orange	0	0	0	Opposite of 82A.	0	0
+Kodak	Wratten #81B	Pale orange	0	0	0	Opposite of 82B.	0	0
+Kodak	Wratten #81C	Pale orange	0	0	0	Opposite of 82C.	0	0
+Kodak	Wratten #81D	Pale orange	0	0	0		0	0
+Kodak	Wratten #81EF	Pale orange	0	0	0		0	0
+Kodak	Wratten #82A	Pale blue	0	0	0	Opposite of 81A.	0	0
+Kodak	Wratten #82B	Pale blue	0	0	0	Opposite of 81B.	0	0
+Kodak	Wratten #82C	Pale blue	0	0	0	Opposite of 81C.	0	0
+Kodak	Wratten #85	Amber	0	0	0	Opposite of 80A.	0	0
+Kodak	Wratten #85B	Amber	0	0	0		0	0
+Kodak	Wratten #85C	Amber	0	0	0		0	0
+Kodak	Wratten #85N3	Amber	0	0	0	Neutral Density of 1 stop. Opposite of 80A.	0	0
+Kodak	Wratten #85N6	Amber	0	0	0	Neutral Density of 2 stops. Opposite of 80A.	0	0
+Kodak	Wratten #85N9	Amber	0	0	0	Neutral Density of 3 stops. Opposite of 80A.	0	0
+Kodak	Wratten #87		0	0	0		0	0
+Kodak	Wratten #87C	Opaque	0	0	0	Passes IR only.	0	0
+Kodak	Wratten #89B	Near-opaque	0	0	0	Passes IR, blocks visible wavelengths below 720 nm.	0	0
+Kodak	Wratten #9	Deep yellow	0	0	0	Absorbs more blue than #8.	0	0
+Kodak	Wratten #90	Dark grayish amber	0	0	0		0	0
+Kodak	Wratten #92	Red	0	0	0		0	0
+Kodak	Wratten #93	Green	0	0	0		0	0
+Kodak	Wratten #94	Blue	0	0	0		0	0
+Kodak	Wratten #96	Grayish	0	0	0	Neutral density filter.	0	0
+Kodak	Wratten #98	Blue	0	0	0		0	0
+Kodak	Wratten #99	Green	0	0	0		0	0
+Lumicon	Comet	Narrow-band	495	520	0	The Lumicon 1.25" Comet Filter, a narrow band-pass filter (25nm), isolates the 501nm OIII line and both C2 lines at 511nm and 514nm. The high contrast of the filter reveals the delicate ionized tail of gaseous comets, allowing you to see their full extent. The Comet Filter also helps you to better distinguish gaseous comets from dusty comets, which normally show little contrast gain.	0	0
+Lumicon	Deep Sky	Narrow-band	495	520	0	This nebula filter blocks all high & low pressure mercury and sodium vapor lamp light, neon lights and airglow, while transmitting the rest of the visible spectrum. Visually, the Deep Sky Filter enhances contrast of nebula under both light-polluted and dark skies. The Deep Sky Filter also passes infrared light, making it an excellent filter for photographing deep space objects through light-polluted skies.	0	0
+Lumicon	Hydrogen-Beta	H-Beta Nebula	482	491	0	Also known as the Horsehead Nebula filter, this filter isolates only the hydrogen-beta line of the spectrum (486nm) in a narrow pass-band just 9 nm wide, providing maximum contrast. You can view extremely faint nebulous objects such as the Horsehead, Cocoon and California Nebulae.	0	0
+Lumicon	Infrared Blocking	IR Blocking	750	1000	0		0	0
+Orion	#15	Deep yellow	0	0	0	Boosts contrast of lunar features, accentuates red and orange features on Saturn, Jupiter, and Mars, reveals low-contrast cloud detail on Venus.	0	0
+Orion	#21	Orange	0	0	0	Sharpens visibility of dark surface markings and polar regions on Mars. Surface dust storms become easily visible.	0	0
+Orion	#25	Red	0	0	0	Enhances Martian surface details in large telescopes, reveals cloud definition on Venus, accentuates bluish cloud regions on Jupiter and Saturn.	0	0
+Orion	#58	Green	0	0	0	Enhances contrast of blue and red structures on Jupiter (including Red Spot), melt lines around Martian polar ice caps, accentuates Saturn's cloud belts.	0	0
+Orion	#80A	Medium blue	0	0	0	Enhances details in Jupiter's belts and Red Spot, high clouds and polar caps on Mars, lunar surface details, Venus cloud features.	0	0
+Orion	H-Beta	Hydrogen-Beta Nebula	480	492	0	By isolating the hydrogen-beta spectral line centered at 486.1 nm in a 12nm band-pass and blocking other wavelengths, Orion's Hydrogen-Beta Telescope Filter effectively blackens the background sky, allowing the faint nebula to become clearly defined.	0	0
+Orion	Mars	Mars filter	0	0	0	Enhances contrast of virtually all surface features. Dielectric coatings transmit violet/blue (< 505nm) and orange/red (> 615nm) wavelengths where detail is rich, while blocking overbearing yellow/green (515nm-615nm) wavelengths. Polar icecaps appear more sharply defined, and differences in landscape shading are nicely resolved. Polar hazes and cloud cover become visible.	0	0
+Orion	O-III	Oxygen III Nebula	490	510	0	Transmits close to 90% of the light corresponding to 2 oxygen-III spectral lines at 496nm and 501nm.	0	0
+Orion	SkyGlow	Broadband	450	540	0	Enhances contrast of all celestial objects, particularly emission nebulas, in moderately light-polluted skies.	650	800
+Orion	UltraBlock	Narrowband	485	520	0	Light-pollution filter	0	0
+Thousand Oaks	LP-1	Broadband	450	520	0		650	800
+Thousand Oaks	LP-2	Narrowband	480	510	0		0	0
+Thousand Oaks	LP-3	Oxygen III	490	510	0		0	0
+Thousand Oaks	LP-4	H-Beta	480	492	0		0	0
+Baader	UHC-S	Nebula	450	525	0		625	675
